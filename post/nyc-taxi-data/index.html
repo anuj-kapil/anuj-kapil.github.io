@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>NYC Taxi Data | LoveIt Theme</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noodp" />
+<meta name="Description" content="About LoveIt Theme"><link rel="prev" href="/post/2015-07-23-r-rmarkdown/" /><link rel="canonical" href="/post/nyc-taxi-data/" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff"><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="NYC Taxi Data"/>
+<meta name="twitter:description" content=""/>
+<script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "NYC Taxi Data",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "\/post\/nyc-taxi-data\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "post","wordcount":  6242 ,
+        "url": "\/post\/nyc-taxi-data\/","datePublished": "2020-02-05T00:00:00\x2b00:00","dateModified": "2020-02-05T17:25:50\x2b11:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "xxxx",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"description": ""
+    }
+    </script><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/css/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/css/lib/animate/animate.min.css"></head>
+    <body><script>
+            window.isDark = (window.localStorage && window.localStorage.getItem('theme')) === 'dark';
+            window.isDark && document.body.classList.add('dark-theme');
+        </script><div class="wrapper"><nav class="navbar">
+    <div class="navbar-container">
+        <div class="navbar-header animated bounceIn">
+            <a href="/">LoveIt Theme</a>
+        </div>
+        <div class="navbar-menu"><a class="menu-item" href="/posts" title="">Posts</a><a class="menu-item" href="/tags" title="">Tags</a><a class="menu-item" href="/categories" title="">Categories</a><a class="menu-item" href="/about" title="">About</a><a class="menu-item" href="https://hugo-loveit-zh.netlify.com" title="简体中文"><i class="fas fa-language fa-fw"></i></a><a href="javascript:void(0);" class="theme-switch"><i class="fas fa-adjust fa-rotate-180 fa-fw" title="Switch Theme"></i></a>
+        </div>
+    </div>
+</nav><nav class="navbar-mobile">
+    <div class="navbar-container">
+        <div class="navbar-header">
+            <div class="navbar-header-title animated bounceIn">
+                <a href="/">LoveIt Theme</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="navbar-menu" id="mobile-menu"><a class="menu-item" href="/posts" title="">Posts</a><a class="menu-item" href="/tags" title="">Tags</a><a class="menu-item" href="/categories" title="">Categories</a><a class="menu-item" href="/about" title="">About</a><a class="menu-item" href="https://hugo-loveit-zh.netlify.com" title="简体中文"></a><a href="javascript:void(0);" class="theme-switch"><i class="fas fa-adjust fa-rotate-180 fa-fw" title="Switch Theme"></i></a>
+        </div>
+    </div>
+</nav><main class="main">
+                <div class="container"><div class="page single"><h1 class="post-title animated pulse faster">NYC Taxi Data</h1><div class="post-content"><h1 id="new-york-taxi-data">New York Taxi Data</h1>
+<h1 id="loading-r-libraries">Loading R libraries</h1>
+<p>The following R libraries have been used for the analysis.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">knitr</span><span class="o">::</span><span class="n">opts_chunk</span><span class="o">$</span><span class="nf">set</span><span class="p">(</span>
+    <span class="n">echo</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span>
+    <span class="n">warning</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span> 
+    <span class="n">cache</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span> 
+    <span class="n">autodep</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span> 
+    <span class="n">screenshot.force</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span> 
+    <span class="n">out.width</span><span class="o">=</span><span class="s">&#34;</span><span class="s">100%&#34;</span><span class="p">,</span> 
+    <span class="n">dpi</span><span class="o">=</span><span class="m">300</span><span class="p">,</span>
+    <span class="n">cache.lazy</span> <span class="o">=</span> <span class="kc">FALSE</span>
+<span class="p">)</span>
+<span class="c1"># Install CRAN packages</span>
+<span class="n">list.of.packages</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span>
+  <span class="s">&#34;</span><span class="s">data.table&#34;</span><span class="p">,</span>
+  <span class="s">&#34;</span><span class="s">tidyverse&#34;</span><span class="p">,</span>
+  <span class="s">&#34;</span><span class="s">lubridate&#34;</span><span class="p">,</span>
+  <span class="s">&#34;</span><span class="s">plotly&#34;</span><span class="p">,</span>
+  <span class="s">&#34;</span><span class="s">leaflet&#34;</span><span class="p">,</span>
+  <span class="s">&#34;</span><span class="s">geosphere&#34;</span><span class="p">,</span>
+  <span class="s">&#34;</span><span class="s">ggthemes&#34;</span><span class="p">,</span>
+  <span class="s">&#34;</span><span class="s">ggcorrplot&#34;</span><span class="p">,</span>
+  <span class="s">&#34;</span><span class="s">webshot&#34;</span><span class="p">,</span>
+  <span class="s">&#34;</span><span class="s">caret&#34;</span><span class="p">,</span>
+  <span class="s">&#34;</span><span class="s">xgboost&#34;</span><span class="p">,</span>
+  <span class="s">&#34;</span><span class="s">car&#34;</span>
+<span class="p">)</span>
+
+<span class="n">new.packages</span> <span class="o">&lt;-</span> <span class="n">list.of.packages</span><span class="n">[</span><span class="o">!</span><span class="p">(</span><span class="n">list.of.packages</span> <span class="o">%in%</span> <span class="nf">installed.packages</span><span class="p">(</span><span class="p">)</span><span class="n">[</span><span class="p">,</span> <span class="s">&#34;</span><span class="s">Package&#34;</span><span class="n">]</span><span class="p">)</span><span class="n">]</span>
+<span class="nf">if </span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">new.packages</span><span class="p">)</span><span class="p">)</span> <span class="nf">install.packages</span><span class="p">(</span><span class="n">new.packages</span><span class="p">,</span> <span class="n">repos</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">https://cran.rstudio.com/&#34;</span><span class="p">,</span> <span class="n">dependencies</span> <span class="o">=</span> <span class="bp">T</span><span class="p">)</span>
+
+<span class="nf">suppressWarnings</span><span class="p">(</span><span class="nf">suppressMessages</span><span class="p">(</span><span class="nf">suppressPackageStartupMessages</span><span class="p">(</span><span class="p">{</span>
+  <span class="nf">library</span><span class="p">(</span><span class="n">data.table</span><span class="p">)</span>
+  <span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+  <span class="nf">library</span><span class="p">(</span><span class="n">lubridate</span><span class="p">)</span>
+  <span class="nf">library</span><span class="p">(</span><span class="n">plotly</span><span class="p">)</span>
+  <span class="nf">library</span><span class="p">(</span><span class="n">leaflet</span><span class="p">)</span>
+  <span class="nf">library</span><span class="p">(</span><span class="n">geosphere</span><span class="p">)</span>
+  <span class="nf">library</span><span class="p">(</span><span class="n">ggthemes</span><span class="p">)</span>
+  <span class="nf">library</span><span class="p">(</span><span class="n">ggcorrplot</span><span class="p">)</span>
+  <span class="nf">library</span><span class="p">(</span><span class="n">webshot</span><span class="p">)</span>
+  <span class="nf">library</span><span class="p">(</span><span class="n">caret</span><span class="p">)</span>
+  <span class="nf">library</span><span class="p">(</span><span class="n">xgboost</span><span class="p">)</span>
+  <span class="nf">library</span><span class="p">(</span><span class="n">car</span><span class="p">)</span>
+<span class="p">}</span><span class="p">)</span><span class="p">)</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="preparing-data">Preparing Data</h1>
+<a class="post-dummy-target" id="load-datasets"></a><h2>Load Datasets</h2>
+<p>The zipped files were downloaded manually from the link provided and
+decompressed to extract the CSVs.<br>
+The CSVs are loaded in to memory using the <em>fread</em> function from the
+<strong>data.table</strong> package</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">trip_fare</span> <span class="o">&lt;-</span> <span class="nf">fread</span><span class="p">(</span><span class="s">&#39;</span><span class="s">../Data/trip_fare_4.csv&#39;</span><span class="p">)</span>
+<span class="n">trip_data</span> <span class="o">&lt;-</span> <span class="nf">fread</span><span class="p">(</span><span class="s">&#39;</span><span class="s">../Data/trip_data_4.csv&#39;</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><a class="post-dummy-target" id="merge-two-datasets"></a><h2>Merge two datasets</h2>
+<p>Let’s merge the two datasets to create a single dataset containing all
+the information.<br>
+Since the data does not comes with a data dictionary, we will try to
+define the primary key for the two datasets. Ideally, a unique trip can
+be identified by taxi identifier, with a given pick-up datetime.</p>
+<ul>
+<li>medallion - unique taxi permit</li>
+<li>hack_license - unique taxi license number</li>
+<li>vendor_id - Taxi service provider company</li>
+<li>pickup_datetime - Adding in time component to uniquely identify a
+single trip</li>
+</ul>
+<p>Based on the primary keys, we will identify if we have duplicates in the
+two datasets before merging them.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">join_keycols</span> <span class="o">&lt;-</span> <span class="nf">names</span><span class="p">(</span><span class="n">trip_fare</span><span class="p">)</span><span class="n">[1</span><span class="o">:</span><span class="m">4</span><span class="n">]</span>
+<span class="nf">setkeyv</span><span class="p">(</span><span class="n">trip_fare</span><span class="p">,</span> <span class="n">join_keycols</span><span class="p">)</span>
+<span class="nf">setkeyv</span><span class="p">(</span><span class="n">trip_data</span><span class="p">,</span> <span class="n">join_keycols</span><span class="p">)</span>
+
+<span class="c1"># Number of records in trip fare dataset</span>
+<span class="n">trip_fare</span><span class="n">[</span><span class="p">,</span> <span class="n">.N</span><span class="n">]</span>
+<span class="c1">#15100468</span>
+
+<span class="c1"># Unique records in trip fare dataset by the primary key</span>
+<span class="nf">uniqueN</span><span class="p">(</span><span class="n">trip_fare</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="nf">key</span><span class="p">(</span><span class="n">trip_fare</span><span class="p">)</span><span class="p">)</span>
+<span class="c1">#15099816</span>
+
+<span class="c1"># Number of records in trip data dataset</span>
+<span class="n">trip_data</span><span class="n">[</span><span class="p">,</span><span class="n">.N</span><span class="n">]</span>
+<span class="c1">#15100468</span>
+
+<span class="c1"># Unique records in trip data dataset by the primary key</span>
+<span class="nf">uniqueN</span><span class="p">(</span><span class="n">trip_data</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="nf">key</span><span class="p">(</span><span class="n">trip_data</span><span class="p">)</span><span class="p">)</span>
+<span class="c1">#15099816</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Looking at the statistics above and based on the defined primary key to
+identify a unique trip, we do see some duplicates in both the datasets.
+We need to ensure the duplicates are removed and both datasets contains
+same trips before merging them.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">trip_fare</span> <span class="o">&lt;-</span> <span class="nf">unique</span><span class="p">(</span><span class="n">trip_fare</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="nf">key</span><span class="p">(</span><span class="n">trip_fare</span><span class="p">)</span><span class="p">)</span>
+<span class="n">trip_data</span> <span class="o">&lt;-</span> <span class="nf">unique</span><span class="p">(</span><span class="n">trip_data</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="nf">key</span><span class="p">(</span><span class="n">trip_data</span><span class="p">)</span><span class="p">)</span>
+
+<span class="c1"># Inner JOIN makes sure that we have only the common trips from both the datasets</span>
+<span class="n">trip_combined</span> <span class="o">&lt;-</span> <span class="n">trip_fare</span><span class="n">[trip_data</span><span class="p">,</span> <span class="n">nomatch</span> <span class="o">=</span> <span class="m">0</span><span class="n">]</span>
+<span class="n">trip_combined</span><span class="n">[</span><span class="p">,</span> <span class="n">.N</span><span class="n">]</span>
+<span class="c1">#15099816</span>
+</code></pre></td></tr></table>
+</div>
+</div><a class="post-dummy-target" id="sample-dataset"></a><h2>Sample dataset</h2>
+<p>Since the dataset is large and resources are limited, we will work with
+a sample of the data instead of the entire dataset. Here, we are taking
+a random sample of 10% of the entire dataset. Seed is set before taking
+the sample to make sure the results are reproducible everytime the code
+is re-run. We will save the sample dataset to a file so that we don’t
+have to repeat these steps everytime the code is re-run and instead read
+the sample dataset directly from disk.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">set.seed</span><span class="p">(</span><span class="m">131</span><span class="p">)</span>
+
+<span class="c1"># Randomly select 10% of the records</span>
+<span class="n">trip_combined</span><span class="n">[</span><span class="p">,</span> <span class="n">sample_flg</span> <span class="o">:</span><span class="o">=</span> <span class="nf">sample</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="kc">TRUE</span><span class="p">,</span> <span class="kc">FALSE</span><span class="p">)</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">.N</span><span class="p">,</span> <span class="n">replace</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span> <span class="n">prob</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span> <span class="m">0.9</span><span class="p">)</span><span class="p">)</span><span class="n">]</span>
+
+<span class="c1"># Subset the 10% of the records as a sampe dataset</span>
+<span class="n">trip_combined_sample</span> <span class="o">&lt;-</span> <span class="n">trip_combined</span><span class="n">[sample_flg</span> <span class="o">==</span> <span class="bp">T</span><span class="n">]</span>
+
+<span class="c1"># Save the contents to disk</span>
+<span class="nf">fwrite</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="p">,</span> <span class="s">&#39;</span><span class="s">../Data/trip_combined_sample.csv&#39;</span><span class="p">)</span>
+
+<span class="c1"># Compress the csv</span>
+<span class="nf">system</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&#34;</span><span class="s">gzip -f ../Data/trip_combined_sample.csv&#34;</span><span class="p">)</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><a class="post-dummy-target" id="load-the-sample-dataset"></a><h2>Load the sample dataset</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">trip_combined_sample</span> <span class="o">&lt;-</span> <span class="nf">fread</span><span class="p">(</span><span class="s">&#39;</span><span class="s">../Data/trip_combined_sample.csv.gz&#39;</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="exploratory-data-analysis">Exploratory Data Analysis</h1>
+<a class="post-dummy-target" id="descriptive-statistics"></a><h2>Descriptive Statistics</h2>
+<p>Let’s look at the data type of the different variables we have in the
+dataset.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">glimpse</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>## Observations: 1,508,586
+## Variables: 22
+## $ medallion          &lt;chr&gt; &quot;00005007A9F30E289E760362F69E4EAD&quot;, &quot;00005007A9F30…
+## $ hack_license       &lt;chr&gt; &quot;1E3F1640D7AE96FADBF4612DF04AC3E3&quot;, &quot;39C3E34B3E338…
+## $ vendor_id          &lt;chr&gt; &quot;CMT&quot;, &quot;CMT&quot;, &quot;CMT&quot;, &quot;CMT&quot;, &quot;CMT&quot;, &quot;CMT&quot;, &quot;CMT&quot;, &quot;…
+## $ pickup_datetime    &lt;chr&gt; &quot;2013-04-24 21:57:34&quot;, &quot;2013-04-04 08:46:48&quot;, &quot;201…
+## $ payment_type       &lt;chr&gt; &quot;CRD&quot;, &quot;CRD&quot;, &quot;CSH&quot;, &quot;CSH&quot;, &quot;CSH&quot;, &quot;CRD&quot;, &quot;CSH&quot;, &quot;…
+## $ fare_amount        &lt;dbl&gt; 18.0, 7.0, 11.5, 9.0, 4.5, 13.0, 5.0, 6.5, 11.5, 2…
+## $ surcharge          &lt;dbl&gt; 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, …
+## $ mta_tax            &lt;dbl&gt; 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, …
+## $ tip_amount         &lt;dbl&gt; 3.80, 1.50, 0.00, 0.00, 0.00, 2.70, 0.00, 0.00, 0.…
+## $ tolls_amount       &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ total_amount       &lt;dbl&gt; 22.80, 9.00, 12.00, 9.50, 5.00, 16.20, 5.50, 7.00,…
+## $ rate_code          &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+## $ store_and_fwd_flag &lt;chr&gt; &quot;N&quot;, &quot;N&quot;, &quot;Y&quot;, &quot;Y&quot;, &quot;N&quot;, &quot;N&quot;, &quot;N&quot;, &quot;N&quot;, &quot;Y&quot;, &quot;N&quot;, …
+## $ dropoff_datetime   &lt;chr&gt; &quot;2013-04-24 22:16:29&quot;, &quot;2013-04-04 08:54:53&quot;, &quot;201…
+## $ passenger_count    &lt;int&gt; 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2,…
+## $ trip_time_in_secs  &lt;int&gt; 1135, 484, 1055, 667, 217, 1094, 241, 470, 922, 17…
+## $ trip_distance      &lt;dbl&gt; 5.0, 1.0, 1.5, 1.6, 0.6, 2.5, 0.6, 0.6, 2.0, 6.9, …
+## $ pickup_longitude   &lt;dbl&gt; -74.00161, -73.96178, -73.98432, -73.97349, -73.98…
+## $ pickup_latitude    &lt;dbl&gt; 40.73072, 40.76859, 40.76865, 40.75900, 40.75373, …
+## $ dropoff_longitude  &lt;dbl&gt; -73.95048, -73.97217, -73.97810, -73.95551, -73.98…
+## $ dropoff_latitude   &lt;dbl&gt; 40.78067, 40.76031, 40.75504, 40.77824, 40.75464, …
+## $ sample_flg         &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TR…
+</code></pre>
+<p>The date times are read as strings (character) format. Let’s convert
+date strings to date time format in
+R</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span> <span class="n">pickup_datetime</span> <span class="o">:</span><span class="o">=</span> <span class="nf">as.POSIXct</span><span class="p">(</span><span class="n">pickup_datetime</span><span class="p">,</span><span class="n">format</span><span class="o">=</span><span class="s">&#34;</span><span class="s">%Y-%m-%d %H:%M:%OS&#34;</span><span class="p">)</span><span class="n">]</span>
+<span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span> <span class="n">dropoff_datetime</span> <span class="o">:</span><span class="o">=</span> <span class="nf">as.POSIXct</span><span class="p">(</span><span class="n">dropoff_datetime</span><span class="p">,</span><span class="n">format</span><span class="o">=</span><span class="s">&#34;</span><span class="s">%Y-%m-%d %H:%M:%OS&#34;</span><span class="p">)</span><span class="n">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Summary of data shows that the taxi trips are recorded for only a month,
+and is from April 2013.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">summary</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##   medallion         hack_license        vendor_id        
+##  Length:1508586     Length:1508586     Length:1508586    
+##  Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character  
+##                                                          
+##                                                          
+##                                                          
+##                                                          
+##  pickup_datetime               payment_type        fare_amount    
+##  Min.   :2013-04-01 00:00:00   Length:1508586     Min.   :  2.50  
+##  1st Qu.:2013-04-08 16:36:59   Class :character   1st Qu.:  6.50  
+##  Median :2013-04-16 00:57:00   Mode  :character   Median :  9.50  
+##  Mean   :2013-04-16 01:53:27                      Mean   : 12.28  
+##  3rd Qu.:2013-04-23 14:04:00                      3rd Qu.: 14.00  
+##  Max.   :2013-04-30 23:59:58                      Max.   :500.00  
+##                                                                   
+##    surcharge         mta_tax         tip_amount       tolls_amount    
+##  Min.   :0.0000   Min.   :0.0000   Min.   :  0.000   Min.   : 0.0000  
+##  1st Qu.:0.0000   1st Qu.:0.5000   1st Qu.:  0.000   1st Qu.: 0.0000  
+##  Median :0.0000   Median :0.5000   Median :  1.000   Median : 0.0000  
+##  Mean   :0.3264   Mean   :0.4983   Mean   :  1.348   Mean   : 0.2445  
+##  3rd Qu.:0.5000   3rd Qu.:0.5000   3rd Qu.:  2.000   3rd Qu.: 0.0000  
+##  Max.   :3.0000   Max.   :0.5000   Max.   :160.000   Max.   :20.0000  
+##                                                                       
+##   total_amount     rate_code     store_and_fwd_flag
+##  Min.   :  2.5   Min.   :0.000   Length:1508586    
+##  1st Qu.:  8.0   1st Qu.:1.000   Class :character  
+##  Median : 11.0   Median :1.000   Mode  :character  
+##  Mean   : 14.7   Mean   :1.033                     
+##  3rd Qu.: 16.5   3rd Qu.:1.000                     
+##  Max.   :510.0   Max.   :6.000                     
+##                                                    
+##  dropoff_datetime              passenger_count trip_time_in_secs
+##  Min.   :2013-04-01 00:01:00   Min.   :0.000   Min.   :    0.0  
+##  1st Qu.:2013-04-08 16:49:21   1st Qu.:1.000   1st Qu.:  360.0  
+##  Median :2013-04-16 01:08:00   Median :1.000   Median :  600.0  
+##  Mean   :2013-04-16 02:05:58   Mean   :1.711   Mean   :  747.6  
+##  3rd Qu.:2013-04-23 14:18:00   3rd Qu.:2.000   3rd Qu.:  960.0  
+##  Max.   :2013-05-01 00:40:00   Max.   :9.000   Max.   :10800.0  
+##                                                                 
+##  trip_distance    pickup_longitude   pickup_latitude    dropoff_longitude
+##  Min.   : 0.000   Min.   :-1351.09   Min.   :-3117.30   Min.   :-736.02  
+##  1st Qu.: 1.050   1st Qu.:  -73.99   1st Qu.:   40.74   1st Qu.: -73.99  
+##  Median : 1.790   Median :  -73.98   Median :   40.75   Median : -73.98  
+##  Mean   : 2.867   Mean   :  -72.73   Mean   :   40.06   Mean   : -72.68  
+##  3rd Qu.: 3.200   3rd Qu.:  -73.97   3rd Qu.:   40.77   3rd Qu.: -73.96  
+##  Max.   :85.700   Max.   :   73.94   Max.   : 2316.22   Max.   : 100.99  
+##                                                         NA's   :15       
+##  dropoff_latitude   sample_flg    
+##  Min.   :-3517.93   Mode:logical  
+##  1st Qu.:   40.73   TRUE:1508586  
+##  Median :   40.75                 
+##  Mean   :   40.04                 
+##  3rd Qu.:   40.77                 
+##  Max.   : 1608.48                 
+##  NA's   :15
+</code></pre>
+<a class="post-dummy-target" id="missing-data-analysis"></a><h2>Missing Data Analysis</h2>
+<p>The summary statistics shows that there are missing values only for two
+of the variables, <em>dropoff_longitude</em> and <em>dropoff_latitude</em> There are
+techniques to analyse missing values with missing at random or missing
+completely at random or missing not at random. And, there are techniques
+to treat the missing values like removing the entire record containing
+missing values or imputing the missing values with mean, median or some
+fixed values. But for the purpose of this analysis, we will simple
+remove them as the missing obersvations are a tiny proportion of the
+sample dataset.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Remove the null values from drop-off lat and long</span>
+<span class="n">trip_combined_sample</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">dropoff_longitude</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">dropoff_latitude</span><span class="p">)</span><span class="n">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><a class="post-dummy-target" id="outlier-analysis--data-cleaning"></a><h2>Outlier Analysis &amp; Data Cleaning</h2>
+<p>From the summary statistics, looking at the range of the values of lat
+and long, it appears the data is either incorrect or the lat long are
+captured in a multiple formats.<br>
+Assuming lat and long are captured in degrees (decimal) format, we will
+remove any erroneous data that does not conforms with the degrees
+(decimal) format.<br>
+Since the latitudes range from -90 to 90 and longitudes range from -180
+to 180, any data that is outside that range will be removed from the
+dataset.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Lat long range (lat from -90 to 90 and long from -180 to 180)</span>
+<span class="n">trip_combined_sample</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[pickup_latitude</span> <span class="o">%between%</span> <span class="nf">c</span><span class="p">(</span><span class="m">-90</span><span class="p">,</span> <span class="m">90</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">pickup_longitude</span> <span class="o">%between%</span> <span class="nf">c</span><span class="p">(</span><span class="m">-180</span><span class="p">,</span> <span class="m">180</span><span class="p">)</span><span class="n">]</span>
+
+<span class="n">trip_combined_sample</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[dropoff_latitude</span> <span class="o">%between%</span> <span class="nf">c</span><span class="p">(</span><span class="m">-90</span><span class="p">,</span> <span class="m">90</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">dropoff_longitude</span> <span class="o">%between%</span> <span class="nf">c</span><span class="p">(</span><span class="m">-180</span><span class="p">,</span> <span class="m">180</span><span class="p">)</span><span class="n">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>The range of lat and long is now within the standard range but it is
+still too large considering the data is only from New York taxi
+services.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">summary</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="o">$</span><span class="n">pickup_latitude</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##  -74.02   40.74   40.75   40.07   40.77   73.99
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">summary</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="o">$</span><span class="n">pickup_longitude</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##  -96.70  -73.99  -73.98  -72.73  -73.97   73.94
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">summary</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="o">$</span><span class="n">dropoff_latitude</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##  -74.01   40.73   40.75   40.05   40.77   74.02
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">summary</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="o">$</span><span class="n">dropoff_longitude</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+## -153.96  -73.99  -73.98  -72.68  -73.96  100.99
+</code></pre>
+<p>The histograms and box plots for the various lat and longs shows that
+most of the data points are concentatrated around a specific cordinates
+but some of the trips are spread all over the world.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">hist</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="o">$</span><span class="n">pickup_latitude</span><span class="p">,</span>
+      <span class="n">main</span><span class="o">=</span><span class="s">&#34;</span><span class="s">Histogram for Pickup Latitude&#34;</span><span class="p">,</span> 
+      <span class="n">xlab</span><span class="o">=</span><span class="s">&#34;</span><span class="s">Pickup Latitude&#34;</span><span class="p">,</span> 
+      <span class="n">border</span><span class="o">=</span><span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">,</span> 
+      <span class="n">col</span><span class="o">=</span><span class="s">&#34;</span><span class="s">lightblue&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-12-1.png" width="100%" /></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">ggplot</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&#34;</span><span class="s">pickup_latitude&#34;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">pickup_latitude</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_boxplot</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">&#34;</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Box Plot for Pickup Latitude&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">none&#34;</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">theme</span><span class="p">(</span><span class="n">axis.title.x</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span>
+        <span class="n">axis.text.x</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span>
+        <span class="n">axis.ticks.x</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_colour_tableau</span><span class="p">(</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-12-2.png" width="100%" /></p>
+<p>We know that NYC is in northern hemisphere. Some of the pickups are from
+equator (latitude = 0) and some are from southern hemisphere.<br>
+Clearly data is either wrongly captured or there were errors in
+capturing the data.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">hist</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="o">$</span><span class="n">pickup_longitude</span><span class="p">,</span>
+     <span class="n">main</span><span class="o">=</span><span class="s">&#34;</span><span class="s">Histogram for Pickup Longitude&#34;</span><span class="p">,</span> 
+     <span class="n">xlab</span><span class="o">=</span><span class="s">&#34;</span><span class="s">Pickup Longitude&#34;</span><span class="p">,</span> 
+     <span class="n">border</span><span class="o">=</span><span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">,</span> 
+     <span class="n">col</span><span class="o">=</span><span class="s">&#34;</span><span class="s">lightblue&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-13-1.png" width="100%" /></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">ggplot</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&#34;</span><span class="s">pickup_longitude&#34;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">pickup_longitude</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_boxplot</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">&#34;</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Box Plot for Pickup Longitude&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">none&#34;</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">theme</span><span class="p">(</span><span class="n">axis.title.x</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span>
+        <span class="n">axis.text.x</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span>
+        <span class="n">axis.ticks.x</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_colour_tableau</span><span class="p">(</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-13-2.png" width="100%" /></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">hist</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="o">$</span><span class="n">dropoff_latitude</span><span class="p">,</span>
+     <span class="n">main</span><span class="o">=</span><span class="s">&#34;</span><span class="s">Histogram for Dropoff Latitude&#34;</span><span class="p">,</span> 
+     <span class="n">xlab</span><span class="o">=</span><span class="s">&#34;</span><span class="s">Dropoff Latitude&#34;</span><span class="p">,</span> 
+     <span class="n">border</span><span class="o">=</span><span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">,</span> 
+     <span class="n">col</span><span class="o">=</span><span class="s">&#34;</span><span class="s">lightblue&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-13-3.png" width="100%" /></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">ggplot</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&#34;</span><span class="s">dropoff_latitude&#34;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">dropoff_latitude</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_boxplot</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">&#34;</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Box Plot for Dropoff Latitude&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">none&#34;</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">theme</span><span class="p">(</span><span class="n">axis.title.x</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span>
+        <span class="n">axis.text.x</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span>
+        <span class="n">axis.ticks.x</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_colour_tableau</span><span class="p">(</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-13-4.png" width="100%" /></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">hist</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="o">$</span><span class="n">dropoff_longitude</span><span class="p">,</span>
+     <span class="n">main</span><span class="o">=</span><span class="s">&#34;</span><span class="s">Histogram for Dropoff Longitude&#34;</span><span class="p">,</span> 
+     <span class="n">xlab</span><span class="o">=</span><span class="s">&#34;</span><span class="s">Dropoff Longitude&#34;</span><span class="p">,</span> 
+     <span class="n">border</span><span class="o">=</span><span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">,</span> 
+     <span class="n">col</span><span class="o">=</span><span class="s">&#34;</span><span class="s">lightblue&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-13-5.png" width="100%" /></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">ggplot</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&#34;</span><span class="s">dropoff_longitude&#34;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">dropoff_longitude</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_boxplot</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">&#34;</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Box Plot for Dropoff Longitude&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">none&#34;</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">theme</span><span class="p">(</span><span class="n">axis.title.x</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span>
+        <span class="n">axis.text.x</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span>
+        <span class="n">axis.ticks.x</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_colour_tableau</span><span class="p">(</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-13-6.png" width="100%" /></p>
+<p>Since we are dealing with New York data, the lat and long can further be
+limited to New York and nearby. NYC coordinates are 40.7141667 lat and
+-74.0063889 long and if we restrict the pickups and drops within 1000 km
+radius, we should have a reliable dataset about the NYC taxi trips
+only</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># NYC range within 1000 kms radius (1 degree equal appox 111 kms) and NYC coordinates are 40.7141667 lat and -74.0063889 long</span>
+<span class="n">trip_combined_sample</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[pickup_latitude</span> <span class="o">%between%</span> <span class="nf">c</span><span class="p">(</span><span class="m">30</span><span class="p">,</span> <span class="m">50</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">pickup_longitude</span> <span class="o">%between%</span> <span class="nf">c</span><span class="p">(</span><span class="m">-84</span><span class="p">,</span> <span class="m">-64</span><span class="p">)</span><span class="n">]</span>
+
+<span class="n">trip_combined_sample</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[dropoff_latitude</span> <span class="o">%between%</span> <span class="nf">c</span><span class="p">(</span><span class="m">30</span><span class="p">,</span> <span class="m">50</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">dropoff_longitude</span> <span class="o">%between%</span> <span class="nf">c</span><span class="p">(</span><span class="m">-84</span><span class="p">,</span> <span class="m">-64</span><span class="p">)</span><span class="n">]</span>
+
+<span class="c1">#boxplot.stats(trip_combined_sample$pickup_longitude)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Let’s visualize the pick-up lat longs on the map. We can see that most
+of trips are concentrated around Manhattan borough (often referred as
+the city) and some of the pick-ups are from nearby airports.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">leaflet</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="nf">head</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="p">,</span> <span class="m">1000</span><span class="p">)</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">addTiles</span><span class="p">(</span><span class="p">)</span><span class="o">%&gt;%</span>
+  <span class="c1">#addProviderTiles(&#34;Stamen.TonerLite&#34;)%&gt;%</span>
+  <span class="c1">#addProviderTiles(&#34;Esri.NatGeoWorldMap&#34;) %&gt;%</span>
+  <span class="nf">addCircleMarkers</span><span class="p">(</span><span class="o">~</span> <span class="n">pickup_longitude</span><span class="p">,</span> <span class="o">~</span><span class="n">pickup_latitude</span><span class="p">,</span> <span class="n">radius</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span>
+                   <span class="n">color</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">navy&#34;</span><span class="p">,</span> <span class="n">fillOpacity</span> <span class="o">=</span> <span class="m">0.3</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><!--html_preserve-->
+<div id="htmlwidget-0ce28dbc753b69bb9a35" class="leaflet html-widget" style="width:600px;height:600px;">
+</div>
+<script type="application/json" data-for="htmlwidget-0ce28dbc753b69bb9a35">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addCircleMarkers","args":[[40.730717,40.768593,40.768654,40.758999,40.753727,40.758804,40.747742,40.755535,40.744808,40.780235,40.79435,40.767014,40.763885,40.780575,40.752232,40.76712,40.75787,40.788174,40.74577,40.764587,40.767895,40.767262,40.775887,40.756577,40.800339,40.77158,40.756981,40.79364,40.754425,40.76012,40.752384,40.768093,40.747677,40.747856,40.754799,40.76189,40.74551,40.708946,40.751942,40.753082,40.704453,40.772083,40.738888,40.774189,40.779762,40.741745,40.765991,40.814442,40.746651,40.764252,40.745842,40.732609,40.780846,40.72168,40.767456,40.783092,40.749641,40.766155,40.743092,40.794155,40.763588,40.772701,40.764168,40.749195,40.766125,40.774063,40.776913,40.763462,40.759495,40.762115,40.75721,40.786736,40.78093,40.765991,40.765991,40.742493,40.762211,40.805473,40.80838,40.750664,40.750767,40.771015,40.777042,40.732861,40.739014,40.76342,40.716591,40.726845,40.78371,40.719673,40.73373,40.689068,40.723118,40.730637,40.805298,40.759628,40.705437,40.725601,40.720348,40.764137,40.713711,40.794544,40.74226,40.771271,40.733624,40.771343,40.763889,40.74218,40.762348,40.769611,40.723892,40.759064,40.728512,40.73745,40.76012,40.765553,40.755276,40.794655,40.778534,40.789917,40.736496,40.777615,40.748699,40.723,40.7481,40.713669,40.762333,40.754383,40.711994,40.72197,40.753677,40.74931,40.766533,40.774361,40.77272,40.777241,40.781956,40.757088,40.76556,40.785172,40.808346,40.727551,40.750992,40.76049,40.750397,40.743996,40.765091,40.784813,40.794071,40.772137,40.765877,40.747246,40.760933,40.765266,40.773476,40.751179,40.764473,40.791039,40.753353,40.768826,40.806694,40.751038,40.80444,40.756233,40.747292,40.746788,40.731354,40.774006,40.777603,40.753345,40.752453,40.753124,40.736462,40.773041,40.772343,40.772343,40.797771,40.763901,40.737141,40.706451,40.738857,40.776241,40.742413,40.765362,40.755646,40.782753,40.782295,40.748856,40.759659,40.768955,40.779442,40.756863,40.758228,40.803967,40.804749,40.771656,40.724442,40.734524,40.757069,40.751289,40.784801,40.748451,40.755051,40.761955,40.750137,40.810421,40.783783,40.744495,40.803253,40.812027,40.736946,40.722507,40.763008,40.754436,40.772865,40.763935,40.783127,40.766727,40.778625,40.762421,40.743187,40.733875,40.786541,40.730583,40.758114,40.787708,40.794941,40.776325,40.728371,40.743256,40.750381,40.765121,40.718666,40.760529,40.748158,40.805954,40.803204,40.765965,40.744171,40.734653,40.732262,40.769024,40.774101,40.773582,40.646778,40.786507,40.758533,40.756077,40.775116,40.703876,40.765247,40.73716,40.740868,40.754745,40.762081,40.765713,40.75349,40.721722,40.758499,40.75565,40.7579,40.729687,40.735977,40.733295,40.756252,40.749077,40.754803,40.696175,40.732227,40.731373,40.758984,40.784508,40.746246,40.771767,40.749958,40.751698,40.689377,40.759602,40.741901,40.761482,40.73056,40.745201,40.735065,40.761169,40.747368,40.729527,40.746326,40.754593,40.739487,40.739586,40.746384,40.741234,40.748199,40.721558,40.762833,40.778435,40.740906,40.739326,40.721298,40.730583,40.753124,40.727959,40.711517,40.763191,40.774502,40.717957,40.731651,40.741398,40.774719,40.791702,40.763603,40.766796,40.770187,40.74794,40.771568,40.717854,40.720997,40.725685,40.778748,40.743515,40.763435,40.730198,40.754421,40.746784,40.776001,40.784317,40.764706,40.840996,40.723988,40.725033,40.778168,40.763718,40.784534,40.730175,40.773331,40.765408,40.731117,40.756371,40.746735,40.761444,40.763683,40.749783,40.760201,40.764565,40.742359,40.762901,40.746769,40.775974,40.772057,40.78017,40.731628,40.779045,40.772022,40.755211,40.761086,40.764606,40.763893,40.760384,40.787212,40.76334,40.762733,40.759819,40.781647,40.739124,40.769207,40.773106,40.773296,40.766857,40.758038,40.778801,40.773457,40.75486,40.787632,40.779034,40.75235,40.756954,40.76627,40.749706,40.744186,40.760872,40.748547,40.776405,40.720634,40.784107,40.743961,40.735954,40.760361,40.762543,40.759995,40.781223,40.727531,40.747864,40.729614,40.733807,40.770451,40.750744,40.722542,40.749435,40.736584,40.730495,40.740524,40.773983,40.771919,40.789886,40.753014,40.766724,40.780926,40.734482,40.712055,40.775303,40.76189,40.728619,40.742317,40.770573,40.750645,40.781261,40.762939,40.74548,40.749752,40.767563,40.751064,40.7146,40.758099,40.724915,40.721382,40.711575,40.778259,40.767067,40.719944,40.743366,40.753002,40.762047,40.72702,40.73877,40.748432,40.762306,40.793465,40.722393,40.739586,40.790318,40.797508,40.729164,40.761612,40.691158,40.665215,40.714531,40.771397,40.720299,40.735336,40.724243,40.789665,40.777378,40.823196,40.727356,40.747044,40.743809,40.808159,40.791599,40.785122,40.773197,40.762424,40.801334,40.78191,40.78931,40.764153,40.776745,40.772438,40.763714,40.781387,40.775055,40.779404,40.749508,40.775223,40.771751,40.773605,40.778023,40.724251,40.775642,40.78627,40.718716,40.780128,40.801117,40.782429,40.774502,40.774727,40.786381,40.813282,40.749687,40.738262,40.771091,40.770805,40.765713,40.768661,40.759235,40.768379,40.705151,40.75721,40.785244,40.766506,40.806583,40.801094,40.754166,40.776817,40.734581,40.77383,40.759396,40.756317,40.769642,40.745205,40.78083,40.763096,40.752598,40.757092,40.761295,40.800541,40.785446,40.802822,40.719086,40.743626,40.758598,40.765171,40.787041,40.778812,40.734646,40.761135,40.73571,40.727123,40.764835,40.717327,40.757904,40.769775,40.743923,40.719784,40.741566,40.72678,40.732288,40.716057,40.763458,40.756615,40.695908,40.780731,40.718674,40.738708,40.763618,40.738422,40.762089,40.739559,40.76181,40.777702,40.764317,40.742027,40.728333,40.762375,40.725582,40.717842,40.782913,40.764706,40.742844,40.725758,40.751614,40.736965,40.802723,40.743969,40.733826,40.747871,40.805931,40.731419,40.757942,40.773781,40.750938,40.749779,40.762615,40.751949,40.752518,40.751842,40.754753,40.725521,40.762066,40.71106,40.747948,40.765427,40.776634,40.753181,40.739834,40.765289,40.751617,40.760651,40.746246,40.692806,40.741756,40.751431,40.777996,40.759933,40.773907,40.768494,40.778957,40.725224,40.746613,40.756428,40.746143,40.752026,40.773937,40.753799,40.754559,40.75148,40.773933,40.779282,40.73867,40.770012,40.7603,40.751507,40.729565,40.750145,40.763996,40.789906,40.72562,40.762131,40.73378,40.645729,40.774429,40.751991,40.749088,40.774597,40.751606,40.773827,40.750771,40.752193,40.726864,40.726864,40.76487,40.744442,40.7365,40.773933,40.773903,40.74826,40.763653,40.713821,40.783062,40.720451,40.714767,40.746868,40.753983,40.764088,40.751808,40.730255,40.715828,40.764477,40.771519,40.755836,40.721981,40.727085,40.73114,40.755611,40.805267,40.73521,40.728371,40.728371,40.77338,40.750519,40.748154,40.756935,40.776711,40.731403,40.731483,40.740086,40.730766,40.736801,40.748535,40.738323,40.724705,40.779362,40.718067,40.721603,40.750412,40.786743,40.820824,40.765942,40.764217,40.763355,40.745518,40.763233,40.739723,40.732765,40.755154,40.767498,40.768944,40.759468,40.767754,40.714256,40.711205,40.80497,40.744446,40.760506,40.753132,40.739536,40.751488,40.719559,40.726276,40.72728,40.72477,40.762733,40.693108,40.70961,40.777039,40.76466,40.774109,40.745083,40.740269,40.735691,40.733448,40.746449,40.76701,40.749702,40.776829,40.748447,40.808659,40.746716,40.714741,40.73204,40.731388,40.750416,40.77573,40.713264,40.72216,40.739143,40.727058,40.727703,40.777939,40.757637,40.73875,40.745899,40.785103,40.782543,40.78418,40.712997,40.76519,40.733124,40.742207,40.763355,40.775772,40.736111,40.741638,40.711494,40.74242,40.774059,40.779327,40.752823,40.749878,40.738628,40.730022,40.738327,40.745586,40.731827,40.77166,40.762321,40.769459,40.737576,40.740524,40.788803,40.757706,40.739159,40.758499,40.74374,40.757153,40.804367,40.76136,40.7383,40.810772,40.763184,40.733208,40.758797,40.790287,40.738766,40.769855,40.725689,40.751312,40.748924,40.771694,40.726864,40.721336,40.748238,40.731789,40.774933,40.71841,40.773972,40.715008,40.759441,40.751255,40.727409,40.782001,40.761272,40.803364,40.714058,40.787827,40.762863,40.767593,40.769108,40.770058,40.761627,40.765018,40.786491,40.788517,40.793018,40.796654,40.797127,40.789524,40.782383,40.758648,40.753632,40.737751,40.792385,40.75581,40.741268,40.765015,40.758694,40.748222,40.734909,40.74538,40.747223,40.759777,40.762611,40.727833,40.773289,40.750889,40.752148,40.790085,40.762497,40.723804,40.769249,40.747993,40.770977,40.720127,40.736977,40.752373,40.724762,40.75729,40.759975,40.737343,40.716228,40.736706,40.775307,40.758461,40.80069,40.783913,40.76535,40.730824,40.716885,40.755569,40.775383,40.735321,40.769573,40.75219,40.759819,40.77346,40.779743,40.7789,40.729816,40.760662,40.737049,40.773514,40.764431,40.741444,40.742035,40.758114,40.748756,40.754631,40.756443,40.768242,40.758465,40.750099,40.760849,40.805233,40.768894,40.755737,40.773685,40.756798,40.748539,40.778702,40.797966,40.751759,40.765034,40.779354,40.778843,40.795368,40.752552,40.746998,40.752487,40.786007,40.770447,40.717525,40.793922,40.777657,40.772617,40.765064,40.765518,40.709072,40.746441,40.724861,40.743923,40.716034,40.758991,40.782917,40.723763,40.74791,40.718372,40.755711,40.76799,40.780048,40.784672,40.75045,40.765121,40.739132,40.731377,40.746098,40.741795,40.741154,40.739552,40.645363,40.69138,40.768879,40.715004,40.726074,40.77359,40.733746,40.763844,40.764774,40.776875,40.74474,40.788342,40.76775,40.766445,40.741016,40.722164,40.758755,40.752781,40.708179,40.777122,40.749538,40.732655,40.747643,40.761204,40.739269,40.738014,40.730721,40.736149,40.758564,40.769955,40.763573,40.762917,40.762234,40.744549,40.760468,40.732899,40.733868,40.742771,40.760658,40.761398,40.745178,40.740608,40.722504,40.72773,40.742523,40.742214,40.752445,40.745922,40.759392,40.729271,40.731258,40.740055,40.774807,40.745766,40.747173,40.765339,40.779663,40.726997,40.757996,40.751278,40.744492,40.757038,40.762028,40.784691,40.726875,40.771923,40.765427,40.72776,40.765331,40.74184,40.762917,40.743549,40.755836,40.730053,40.740852,40.729347,40.728043,40.758087,40.725529,40.768024,40.728672,40.76825,40.704613],[-74.00161,-73.961784,-73.984322,-73.973495,-73.98912,-73.980865,-73.982849,-73.97683,-73.998749,-73.950287,-73.972275,-73.967087,-73.954582,-73.957039,-73.967735,-73.953468,-73.973534,-73.976913,-73.998123,-73.977203,-73.966324,-73.969147,-73.987022,-73.990082,-73.969582,-73.982643,-73.989944,-73.973373,-73.981659,-73.974586,-73.978157,-73.962883,-73.98938,-73.979195,-73.991356,-73.988876,-73.978363,-74.005058,-73.976044,-73.989464,-74.010612,-73.982445,-74.003296,-73.961945,-73.957634,-73.989372,-74.023048,-73.936096,-73.971413,-73.954559,-73.990448,-73.985527,-73.981461,-74.004387,-73.962326,-73.955208,-73.975838,-73.969543,-73.973022,-73.939972,-73.976311,-73.959419,-73.955872,-73.974815,-73.98037,-73.957352,-73.982307,-73.971107,-73.976563,-73.979675,-73.982033,-73.953171,-73.958679,-74.023048,-74.023048,-73.987053,-73.9814,-73.9366,-73.94445,-73.991066,-73.994301,-73.981552,-73.982513,-74.000046,-73.991615,-73.959206,-73.954155,-73.979759,-73.977654,-73.960266,-73.998177,-73.986092,-73.998299,-74.000504,-73.966057,-73.987549,-74.010086,-73.987015,-73.988861,-73.982254,-73.958061,-73.970009,-73.984741,-73.949806,-73.982552,-73.947868,-73.979019,-74.004951,-73.985603,-73.8629,-73.997505,-73.996071,-74.00029,-73.983475,-73.986237,-73.98011,-73.965851,-73.962639,-73.954262,-73.954262,-74.0065,-73.97876,-73.996651,-74.036316,-73.990143,-74.01088,-73.970154,-73.986488,-73.961044,-73.957985,-73.976341,-73.991791,-73.967438,-73.965813,-73.966675,-73.982147,-73.971901,-73.982956,-73.967949,-73.978821,-73.960114,-74.001289,-73.980446,-73.983055,-73.98246,-73.980255,-73.982216,-73.979469,-73.972107,-73.953049,-73.976959,-74.000732,-73.9729,-73.969986,-73.977997,-73.971207,-73.963081,-73.976288,-73.985115,-73.863098,-73.96122,-73.995232,-73.966652,-73.978218,-73.979065,-73.990028,-74.006737,-73.964157,-73.956665,-73.977211,-73.978111,-73.976784,-73.997299,-73.978088,-73.982033,-73.982033,-73.969627,-73.971672,-73.99295,-74.016716,-73.992317,-73.960167,-73.98484,-73.913879,-73.970901,-73.980873,-73.980911,-73.992027,-73.981422,-73.862595,-73.955383,-73.978401,-73.962784,-73.966782,-73.96637,-73.98275,-73.978546,-73.989563,-73.974525,-73.994041,-73.973518,-73.978249,-73.968483,-73.965469,-73.992065,-73.961914,-73.956718,-73.980972,-73.967567,-73.961151,-74.006958,-73.98896,-73.970039,-73.979851,-73.94931,-73.999077,-73.950798,-73.967064,-73.958435,-73.982597,-74.007423,-74.002686,-73.968498,-73.983215,-73.975388,-73.949509,-73.971764,-73.947929,-73.993172,-73.989563,-73.971611,-73.976479,-73.988045,-73.983414,-73.989235,-73.954399,-73.948792,-73.977562,-73.98558,-73.986092,-73.996605,-73.96286,-73.874496,-73.951622,-73.789818,-73.952766,-73.968285,-73.992645,-73.960953,-74.007088,-73.98381,-74.001694,-74.007599,-73.963463,-73.976273,-73.960663,-73.974571,-73.997391,-73.976166,-73.974876,-73.982391,-74.004158,-74.005699,-74.006378,-73.96756,-73.992035,-73.96862,-73.990868,-73.988144,-74.006714,-73.97271,-73.981064,-73.984093,-73.959389,-73.996002,-73.974106,-73.991684,-73.976173,-73.99369,-73.983223,-73.989449,-73.975769,-73.985535,-73.97982,-73.972214,-73.991623,-74.001411,-73.971794,-73.984543,-74.002617,-73.997704,-74.005058,-73.989418,-73.989098,-73.974266,-73.945099,-74.007614,-74.005661,-73.987732,-73.992462,-73.978584,-73.992958,-73.945808,-73.973877,-73.957397,-74.000877,-73.954468,-73.989746,-73.953995,-73.974045,-73.976082,-73.953453,-73.987907,-73.983559,-73.950294,-74.008987,-74.009895,-74.005577,-73.958107,-73.918671,-73.977455,-73.991386,-73.989922,-73.912338,-73.983505,-73.971016,-73.968521,-73.939949,-73.997734,-73.995285,-73.952271,-73.981903,-73.947006,-74.00489,-73.981674,-73.966202,-74.001358,-73.978638,-73.984985,-73.969971,-73.972038,-73.975212,-73.967957,-73.962013,-73.978127,-73.969467,-73.912453,-73.98336,-73.952698,-73.952995,-74.005844,-73.955627,-73.990097,-73.976196,-73.967476,-73.976463,-73.976219,-73.971893,-73.954414,-73.981918,-73.959709,-73.97171,-73.981339,-74.002968,-73.954887,-73.958267,-73.946289,-73.96759,-73.966454,-73.985977,-73.870735,-73.992455,-73.977333,-73.987122,-73.993454,-73.993622,-73.982269,-73.972359,-73.987488,-73.985123,-74.008095,-73.962303,-74.010025,-73.970215,-73.99588,-73.987595,-73.967316,-73.967216,-73.996346,-73.946243,-74.003113,-73.983093,-73.987015,-73.990738,-73.987595,-74.00576,-73.986633,-73.991623,-73.988831,-73.9907,-73.975784,-73.982101,-73.965775,-73.966049,-73.977821,-73.982864,-73.972664,-73.990128,-74.007965,-73.984055,-73.986252,-73.999634,-74.004501,-73.964317,-73.992485,-73.976097,-73.98333,-73.982918,-73.995239,-73.985947,-74.005531,-74.016098,-73.973709,-73.999039,-73.983971,-73.959526,-73.982285,-73.98304,-73.989876,-73.99234,-74.00412,-73.983742,-74.005577,-74.000244,-73.988838,-73.977966,-73.967163,-74.003677,-74.002663,-73.965805,-73.960503,-73.981232,-73.994232,-73.997711,-73.989616,-73.999649,-73.981972,-73.993217,-73.994331,-73.997299,-73.954315,-73.975197,-73.953011,-74.005463,-74.008255,-74.00663,-73.954544,-73.964844,-73.951591,-73.983772,-73.971031,-73.968376,-73.951698,-73.954651,-73.95546,-73.981735,-73.982048,-73.985046,-73.956566,-73.95668,-73.955452,-73.992661,-73.98423,-73.956131,-73.977913,-73.974792,-73.99794,-73.98011,-73.956917,-73.99929,-73.961479,-73.96154,-73.971451,-73.981903,-73.954208,-73.952309,-73.956345,-73.975067,-74.003891,-73.98716,-73.980721,-73.995392,-73.958473,-73.995804,-73.957481,-74.007919,-73.966728,-73.95771,-73.952415,-73.964287,-73.958122,-73.997856,-73.983009,-73.990845,-73.952049,-73.969414,-73.964478,-73.980774,-73.989265,-73.976395,-73.978195,-73.977997,-73.989143,-73.974602,-73.954704,-73.969299,-73.967857,-73.989731,-73.992355,-73.992668,-73.976563,-73.96817,-73.977608,-73.992355,-73.997948,-74.006042,-73.985619,-73.995552,-73.958412,-73.969406,-73.865898,-73.999519,-74.010193,-74.004951,-73.983299,-73.982506,-74.007149,-73.989326,-73.966919,-73.933212,-73.976532,-73.989281,-73.990791,-73.984886,-73.985588,-73.991364,-73.986549,-73.92469,-73.948792,-73.987228,-74.003754,-73.982109,-73.997292,-73.98394,-73.957848,-73.955475,-73.977135,-73.984169,-74.00309,-73.976753,-73.990547,-73.963699,-73.995743,-74.002731,-73.987991,-73.965652,-73.982819,-73.965981,-73.98243,-73.975777,-73.991356,-73.97197,-73.977577,-73.991753,-73.976707,-73.97879,-73.983902,-73.972069,-74.01432,-73.983345,-73.9646,-73.964172,-73.996552,-73.991455,-73.954239,-73.976166,-74.002769,-74.00843,-73.990921,-73.975113,-73.976059,-73.945717,-73.979759,-73.870743,-73.984978,-73.982056,-73.995193,-73.981773,-73.981911,-73.982185,-73.976784,-73.87352,-73.986015,-73.980118,-73.974464,-73.87326,-73.988052,-73.987335,-73.951843,-73.970016,-73.976738,-73.989761,-73.976013,-73.969048,-73.952461,-74.004585,-73.968323,-74.001709,-73.791023,-73.872925,-73.978378,-73.991425,-73.980026,-73.976357,-73.870903,-73.976936,-73.976006,-74.00341,-74.003555,-73.955269,-73.985252,-74.001068,-73.870728,-73.871361,-73.976631,-73.928345,-74.009201,-73.952911,-73.989388,-74.008789,-73.993034,-73.929588,-73.98848,-73.973679,-74.000389,-74.008125,-73.995926,-73.98246,-73.982292,-73.986526,-73.985641,-73.988693,-73.976395,-73.93924,-73.990082,-73.992722,-73.992722,-73.983009,-73.980797,-73.978584,-73.970184,-73.952202,-73.988564,-73.990326,-74.005959,-73.989029,-73.995552,-73.984367,-74.005318,-73.994072,-73.97374,-73.957481,-73.988472,-73.972343,-73.977829,-73.954659,-73.967598,-73.988472,-73.969505,-73.9804,-73.969688,-74.002556,-74.000122,-73.993835,-73.968803,-73.862854,-73.991142,-73.911858,-73.948051,-73.963341,-73.938614,-73.98114,-73.969353,-73.981026,-73.995193,-73.992569,-73.960449,-73.983414,-74.000443,-73.98439,-73.929153,-73.990646,-73.994858,-73.946289,-73.959251,-73.950897,-73.982834,-73.990288,-73.99559,-73.990723,-73.99472,-73.966942,-73.946335,-73.975578,-73.973511,-73.963493,-74.001175,-74.01252,-73.98822,-73.994957,-74.004761,-73.958244,-74.009758,-73.983887,-73.980171,-73.993919,-74.007256,-73.958954,-73.933945,-73.995872,-73.98233,-73.94915,-73.955215,-73.9571,-73.960304,-73.972176,-73.99575,-73.989151,-73.978294,-73.964592,-73.993355,-74.006821,-73.964714,-73.993973,-73.963783,-73.953705,-73.986603,-74.00264,-73.991669,-73.996361,-73.98365,-74.001968,-73.990143,-73.963554,-73.982483,-73.982834,-74.004822,-74.00174,-73.974213,-74.000732,-73.990982,-73.986488,-73.99247,-73.971451,-73.966629,-73.962524,-73.98558,-73.939117,-73.968338,-73.993301,-73.96257,-73.947701,-73.996025,-73.961067,-74.007729,-73.971291,-73.991959,-73.986694,-73.989151,-73.989258,-73.992691,-74.000824,-73.980598,-73.989265,-73.872932,-74.007896,-73.988724,-73.994064,-73.993568,-73.953857,-73.917236,-73.952843,-73.952179,-73.953438,-73.987869,-73.962273,-73.98851,-73.862686,-73.966835,-73.970695,-73.942543,-73.955048,-73.972687,-73.964653,-73.970177,-73.95253,-73.945328,-73.975227,-73.9795,-74.004517,-73.950661,-73.964684,-73.987801,-73.960724,-73.962738,-73.988098,-73.998543,-73.990837,-73.993607,-73.991447,-73.981857,-73.995026,-73.981445,-73.968483,-73.978271,-73.973167,-73.967957,-73.996338,-73.960533,-73.988533,-73.981636,-73.989159,-73.984421,-73.994431,-73.994331,-73.977448,-73.991714,-73.992867,-73.995758,-73.997452,-73.95356,-73.98877,-73.960312,-73.973862,-73.99131,-73.983147,-74.01223,-73.980614,-73.963287,-73.99189,-73.983421,-73.978127,-73.984039,-73.87056,-73.98452,-73.974075,-74.000443,-73.962646,-73.978378,-73.952049,-73.972931,-74.004906,-74.004181,-73.975731,-74.00679,-73.991989,-73.990189,-73.953186,-74.000168,-73.991356,-73.962463,-73.939377,-73.862801,-73.991081,-73.957565,-73.967384,-73.938309,-73.959267,-73.971794,-73.98233,-73.972832,-73.947533,-73.958344,-73.971176,-73.981415,-74.000885,-73.97789,-73.972588,-73.989647,-74.000412,-73.966904,-73.978569,-73.955627,-73.982323,-73.980286,-74.005432,-73.987465,-73.984421,-73.983749,-74.007095,-73.986465,-73.977951,-73.985176,-74.003471,-73.990616,-73.971481,-73.98262,-73.972984,-73.979691,-74.003342,-73.984177,-73.980087,-73.990128,-73.994118,-74.003159,-73.981483,-74.001793,-73.77726,-73.99382,-73.982712,-73.963921,-73.992012,-73.870598,-74.006912,-73.987656,-73.988281,-73.977325,-73.980835,-73.977486,-73.982155,-73.986862,-73.985603,-73.986305,-73.966545,-73.978241,-73.939934,-73.982391,-74.002647,-74.00042,-73.988174,-73.968529,-73.995308,-74.002052,-73.982979,-73.982315,-73.973732,-73.965004,-73.966965,-73.981766,-73.972107,-73.983315,-73.979889,-74.002151,-74.006577,-73.986649,-73.981941,-73.983047,-73.998589,-74.007835,-73.997154,-73.985291,-73.9869,-73.983589,-73.975288,-73.988243,-73.973938,-74.001106,-73.98877,-73.979454,-73.953903,-73.993675,-73.973808,-73.975471,-73.955643,-73.983711,-73.966415,-73.971359,-73.976227,-73.990204,-73.965752,-73.949303,-73.996284,-73.956093,-73.981895,-73.982391,-73.98774,-73.981094,-73.968193,-74.00666,-73.979172,-73.983398,-73.978844,-73.990005,-73.990944,-73.975388,-74.00547,-73.958939,-74.00164,-73.952782,-74.012245],1,null,null,{"interactive":true,"className":"","stroke":true,"color":"navy","weight":5,"opacity":0.5,"fill":true,"fillColor":"navy","fillOpacity":0.3},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[40.645363,40.840996],"lng":[-74.036316,-73.77726]}},"evals":[],"jsHooks":[]}</script>
+<!--/html_preserve-->
+<p>Some of the trips have a trip distance of 0 and some have trip duration
+of 0. For this analysis, we will drop them from our datasets</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Remove zero distance trips</span>
+<span class="n">trip_combined_sample</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[trip_distance</span> <span class="o">&gt;</span> <span class="m">0</span><span class="n">]</span>
+
+<span class="c1"># Remove zero time trips</span>
+<span class="n">trip_combined_sample</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[trip_time_in_secs</span> <span class="o">&gt;</span> <span class="m">0</span><span class="n">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><a class="post-dummy-target" id="univariate-analysis"></a><h2>Univariate Analysis</h2>
+<a class="post-dummy-target" id="distribution-of-passenger-count"></a><h3>Distribution of Passenger Count</h3>
+<p>Most of trips are single passenger trips. We do have 0 passenger trips.
+Maybe, they are trips for some delivery and does not include any
+passengers. And, there are some trips with 9 passengers. We are not
+excluding any trips based on passenger count as all of these seems to be
+genuine trips and may contribute towards the fare amount predictions.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Count trips group by passenger count</span>
+<span class="n">plot_passenger_dist</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span> <span class="n">.N</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">passenger_count</span><span class="p">)</span><span class="n">]</span>
+
+<span class="c1"># Convert the passenger count to a categorical variable</span>
+<span class="n">plot_passenger_dist</span><span class="o">$</span><span class="n">passenger_count</span> <span class="o">&lt;-</span> <span class="nf">as.factor</span><span class="p">(</span><span class="n">plot_passenger_dist</span><span class="o">$</span><span class="n">passenger_count</span><span class="p">)</span>
+
+<span class="c1"># Visualize</span>
+<span class="nf">ggplot</span><span class="p">(</span><span class="n">plot_passenger_dist</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">passenger_count</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="n">passenger_count</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_col</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_y_sqrt</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Passenger Count&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Number of Trips&#34;</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Histogram of Passenger Count&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">none&#34;</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">scale_colour_tableau</span><span class="p">(</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-17-1.png" width="100%" /></p>
+<a class="post-dummy-target" id="distribution-of-payment-type"></a><h3>Distribution of Payment Type</h3>
+<p>Since there is no data dictionary for the abbreviated payment types. We
+are assuming <em>CRD</em> means a credit card transaction and <em>CSH</em> mean a cash
+transaction. <em>UNK</em> might be Unknown transactions. Most of the
+transactions are either <em>CRD</em> or <em>CSH</em>.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Count trips group by payment type</span>
+<span class="n">plot_payment_type_dist</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span> <span class="n">.N</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">payment_type</span><span class="p">)</span><span class="n">]</span>
+
+<span class="c1"># Convert the payment type to a categorical variable</span>
+<span class="n">plot_payment_type_dist</span><span class="o">$</span><span class="n">payment_type</span> <span class="o">&lt;-</span> <span class="nf">as.factor</span><span class="p">(</span><span class="n">plot_payment_type_dist</span><span class="o">$</span><span class="n">payment_type</span><span class="p">)</span>
+
+<span class="c1"># Visualize</span>
+<span class="nf">ggplot</span><span class="p">(</span><span class="n">plot_payment_type_dist</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">payment_type</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="n">payment_type</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_col</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_y_sqrt</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Payment Type&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Number of Trips&#34;</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Histogram of Payment Type&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">none&#34;</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">scale_colour_tableau</span><span class="p">(</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-18-1.png" width="100%" /></p>
+<a class="post-dummy-target" id="distribution-of-fare-amount"></a><h3>Distribution of Fare Amount</h3>
+<p>Most of the trips are under $80 range. Some of the high fare amounts
+(&gt;$100) needs to be explored further. So the fare amount should be a
+function of trip distance and trip duration. We will have a look if the
+high fares are justified by their corresponding trip distances and
+durations or if they are outliers.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">ggplot</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">fare_amount</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_histogram</span><span class="p">(</span><span class="n">binwidth</span> <span class="o">=</span> <span class="m">20</span><span class="p">,</span>
+                 <span class="n">col</span><span class="o">=</span><span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">,</span> 
+                 <span class="n">fill</span><span class="o">=</span><span class="s">&#34;</span><span class="s">light blue&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Fare Amount&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Number of Trips&#34;</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Histogram of Fare Amount&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">none&#34;</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">scale_colour_tableau</span><span class="p">(</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-19-1.png" width="100%" /></p>
+<a class="post-dummy-target" id="distribution-of-tip-amount"></a><h3>Distribution of Tip Amount</h3>
+<p>Most of the tips are under $10 range. Some of the high tip amounts needs
+to be explored further along with fare amount to detect any outliers.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">ggplot</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">tip_amount</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_histogram</span><span class="p">(</span><span class="n">binwidth</span> <span class="o">=</span> <span class="m">10</span><span class="p">,</span>
+                 <span class="n">col</span><span class="o">=</span><span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">,</span> 
+                 <span class="n">fill</span><span class="o">=</span><span class="s">&#34;</span><span class="s">light blue&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Tip Amount&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Number of Trips&#34;</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Histogram of Tip Amount&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">none&#34;</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">scale_colour_tableau</span><span class="p">(</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-20-1.png" width="100%" /></p>
+<a class="post-dummy-target" id="distribution-of-total-amount"></a><h3>Distribution of Total Amount</h3>
+<p>Most of the total amounts are under $100 range and are along the lines
+of fare amount.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">ggplot</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">total_amount</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_histogram</span><span class="p">(</span><span class="n">binwidth</span> <span class="o">=</span> <span class="m">20</span><span class="p">,</span>
+                 <span class="n">col</span><span class="o">=</span><span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">,</span> 
+                 <span class="n">fill</span><span class="o">=</span><span class="s">&#34;</span><span class="s">light blue&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Total Amount&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Number of Trips&#34;</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Histogram of Total Amount&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">none&#34;</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">scale_colour_tableau</span><span class="p">(</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-21-1.png" width="100%" /></p>
+<h1 id="feature-engineering">Feature Engineering</h1>
+<a class="post-dummy-target" id="fare-per-unit-distance"></a><h2>Fare per unit distance</h2>
+<p>We know that fare amount comprises of multiple price components such as
+starting fare, fare per miles/kms, waiting fares, tolls, surcharges and
+other fees. The major component would be fare per miles/kms (for longer
+trips). Let’s try to compute a fare per unit distance and try to find
+any abnormalities in the data that can impact predicting the fare
+prices. We will try to remove any records that are outside 2 standard
+deviations.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span> <span class="n">fare_per_dist</span> <span class="o">:</span><span class="o">=</span> <span class="p">(</span><span class="n">fare_amount</span><span class="o">/</span><span class="n">trip_distance</span><span class="p">)</span><span class="n">]</span>
+
+<span class="c1"># Calculate 2 standard deviations</span>
+<span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span><span class="n">.(min_fare</span> <span class="o">=</span> <span class="nf">min</span><span class="p">(</span><span class="n">fare_per_dist</span><span class="p">)</span><span class="p">,</span> 
+                        <span class="n">max_fare</span> <span class="o">=</span> <span class="nf">max</span><span class="p">(</span><span class="n">fare_per_dist</span><span class="p">)</span><span class="p">,</span>
+                        <span class="n">sd_2_fare_upper</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">fare_per_dist</span><span class="p">)</span> <span class="o">+</span> <span class="m">2</span> <span class="o">*</span> <span class="nf">sd</span><span class="p">(</span><span class="n">fare_per_dist</span><span class="p">)</span><span class="p">,</span> 
+                        <span class="n">sd_2_fare_lower</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">fare_per_dist</span><span class="p">)</span> <span class="o">-</span> <span class="m">2</span> <span class="o">*</span> <span class="nf">sd</span><span class="p">(</span><span class="n">fare_per_dist</span><span class="p">)</span>
+                        <span class="p">)</span>
+                     <span class="n">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##      min_fare max_fare sd_2_fare_upper sd_2_fare_lower
+## 1: 0.03172589    10000        40.75357       -28.67321
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Visualize if the trip duration has an impact on the high fare_per_dist for lower trip distances</span>
+
+<span class="nf">ggplot</span><span class="p">(</span><span class="nf">head</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="p">,</span> <span class="m">10000</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">trip_distance</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">fare_per_dist</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="p">(</span><span class="n">trip_time_in_secs</span><span class="o">/</span><span class="m">60</span><span class="p">)</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Trip Distance&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Fare amount per unit distance&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">col</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Trip Time (in mins)&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Fare amount per unit distance Vs trip distance &amp; time&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-22-1.png" width="100%" /></p>
+<p>Looking at the chart above, it seems that some of the high fare does not
+have that high trip durations. They seem to be outliers. Let’s remove
+the extreme tail ends of <em>fare_per_dist</em> (2 standard
+deviations)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">trip_combined_sample</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[fare_per_dist</span> <span class="o">&lt;</span> <span class="p">(</span><span class="nf">mean</span><span class="p">(</span><span class="n">fare_per_dist</span><span class="p">)</span> <span class="o">+</span> <span class="m">2</span> <span class="o">*</span> <span class="nf">sd</span><span class="p">(</span><span class="n">fare_per_dist</span><span class="p">)</span><span class="p">)</span><span class="n">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><a class="post-dummy-target" id="day-of-week"></a><h2>Day of week</h2>
+<p>To analyse the impact of time/day on the number of trips, let’s create
+new features/variables and see the impact of day of week on the volume
+of trips
+made.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span> <span class="n">pickup_wday</span> <span class="o">:</span><span class="o">=</span> <span class="nf">wday</span><span class="p">(</span><span class="n">pickup_datetime</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span><span class="n">]</span>
+
+<span class="n">plot_wday_trips</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span> <span class="n">.N</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">pickup_wday</span><span class="p">,</span> <span class="n">vendor_id</span><span class="p">)</span><span class="n">]</span>
+
+<span class="nf">ggplot</span><span class="p">(</span><span class="n">plot_wday_trips</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">pickup_wday</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">colour</span> <span class="o">=</span> <span class="n">vendor_id</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">4</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Day of the week&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Total number of pickups&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">col</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Vendor&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Taxi trips by day of the week&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-24-1.png" width="100%" /></p>
+<p>Looking at the chart above, it shows that <em>Tuesdays</em> were the busiest
+days for the month of April, 2013 followed by <em>Mondays</em>, <em>Saturdays</em> and
+<em>Fridays</em>.</p>
+<a class="post-dummy-target" id="hour-of-the-day"></a><h2>Hour of the day</h2>
+<p>As the fares are dependent on the time of day (odd hours fares are
+higher than normal business hours fares), let’s compute the hour of the
+day feature/variable to see the impact of time of the day on the volumes
+of trips and average fare amount.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span> <span class="n">pickup_hour</span> <span class="o">:</span><span class="o">=</span> <span class="nf">hour</span><span class="p">(</span><span class="n">pickup_datetime</span><span class="p">)</span><span class="n">]</span>
+
+<span class="n">plot_hourly_trips</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span> <span class="n">.N</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">pickup_hour</span><span class="p">)</span><span class="n">]</span>
+
+<span class="nf">ggplot</span><span class="p">(</span><span class="n">plot_hourly_trips</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="nf">reorder</span><span class="p">(</span><span class="n">pickup_hour</span><span class="p">,</span> <span class="o">-</span><span class="n">N</span><span class="p">)</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="nf">reorder</span><span class="p">(</span><span class="n">pickup_hour</span><span class="p">,</span> <span class="o">-</span><span class="n">N</span><span class="p">)</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_col</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_y_sqrt</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Hour of the day&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Total number of pickups&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Taxi trips by hour of the day&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">none&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-25-1.png" width="100%" /></p>
+<p>From the chart, it is clear that the busiest hours are 7pm, 6pm, 8pm,
+9pm and 10 pm. In short the evening times are the busiest from
+6-10pm</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">plot_hourly_fares</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span> <span class="n">.(mean_hourly_fare</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">fare_amount</span><span class="p">)</span><span class="p">)</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">pickup_hour</span><span class="p">)</span><span class="n">]</span>
+
+<span class="nf">ggplot</span><span class="p">(</span><span class="n">plot_hourly_fares</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="nf">reorder</span><span class="p">(</span><span class="n">pickup_hour</span><span class="p">,</span> <span class="o">-</span><span class="n">mean_hourly_fare</span><span class="p">)</span><span class="p">,</span> <span class="n">mean_hourly_fare</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="nf">reorder</span><span class="p">(</span><span class="n">pickup_hour</span><span class="p">,</span> <span class="o">-</span><span class="n">mean_hourly_fare</span><span class="p">)</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_col</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_y_sqrt</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Hour of the day&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Average Fare Amount&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Fare amount by hour of the day&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">none&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-26-1.png" width="100%" /></p>
+<p>Early morning fare averages are high peaking at
+5am.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">plot_hourly_trip_duration</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span> <span class="n">.(mean_hourly_trip_duration</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">trip_time_in_secs</span><span class="p">)</span><span class="p">)</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">pickup_hour</span><span class="p">)</span><span class="n">]</span>
+
+<span class="nf">ggplot</span><span class="p">(</span><span class="n">plot_hourly_trip_duration</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="nf">reorder</span><span class="p">(</span><span class="n">pickup_hour</span><span class="p">,</span> <span class="o">-</span><span class="n">mean_hourly_trip_duration</span><span class="p">)</span><span class="p">,</span> <span class="n">mean_hourly_trip_duration</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="nf">reorder</span><span class="p">(</span><span class="n">pickup_hour</span><span class="p">,</span> <span class="o">-</span><span class="n">mean_hourly_trip_duration</span><span class="p">)</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_col</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_y_sqrt</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Hour of the day&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Average Trip Duration&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Trip Duration by hour of the day&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">none&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-27-1.png" width="100%" /></p>
+<p>Trip in the afternoons till evenings are longer duration trips, probably
+because of traffic.</p>
+<a class="post-dummy-target" id="pickup-distance-from-nyc-centre"></a><h2>Pickup distance from NYC centre</h2>
+<p>To see which at the busiest locations for taxi pickup and the impact of
+location on fare amount, let us compute a feature/variable which depicts
+the distance from city center. The hypothesis is that the locations
+closer to city center will be the busiest.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># New York City coordinates</span>
+<span class="n">nyc</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">-74.0063889</span><span class="p">,</span> <span class="m">40.7141667</span><span class="p">)</span>
+
+<span class="c1"># Calculate distance from the city</span>
+<span class="n">trip_combined_sample</span><span class="o">$</span><span class="n">pickup_dist_from_city</span> <span class="o">&lt;-</span> <span class="nf">distm</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span><span class="nf">list</span><span class="p">(</span><span class="n">pickup_longitude</span><span class="p">,</span> <span class="n">pickup_latitude</span><span class="p">)</span><span class="n">]</span><span class="p">,</span> <span class="n">nyc</span><span class="p">,</span> <span class="n">fun</span> <span class="o">=</span> <span class="n">distHaversine</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Converting distance in meters to kilometers</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Convert distance to km</span>
+<span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span> <span class="n">pickup_dist_from_city</span> <span class="o">:</span><span class="o">=</span> <span class="nf">round</span><span class="p">(</span><span class="n">pickup_dist_from_city</span><span class="o">/</span><span class="m">1000</span><span class="p">,</span> <span class="m">2</span><span class="p">)</span><span class="n">]</span>
+
+<span class="nf">summary</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="o">$</span><span class="n">pickup_dist_from_city</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+##    0.000    3.110    5.050    5.454    7.060 1206.340
+</code></pre>
+<p>The summary shows the maximum distance of a pickup from city center is
+1200 km and is consistent with the ~1000km radius we applied to the
+sample dataset based on lat and long degrees. 75% of the pickups are
+within 7km from city
+centre.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span> <span class="n">km_bin</span> <span class="o">:</span><span class="o">=</span> <span class="nf">cut</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="o">$</span><span class="n">pickup_dist_from_city</span><span class="p">,</span> 
+                                     <span class="nf">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="nf">max</span><span class="p">(</span><span class="n">pickup_dist_from_city</span><span class="p">)</span> <span class="o">+</span> <span class="m">2</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="m">2</span><span class="p">)</span><span class="p">,</span>  
+                                     <span class="n">include.lowest</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span> 
+                                     <span class="n">right</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span><span class="n">]</span>
+
+<span class="n">plot_distance_from_city</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[pickup_dist_from_city</span> <span class="o">&lt;=</span><span class="m">30</span><span class="p">,</span> <span class="n">.N</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">km_bin</span><span class="p">)</span><span class="n">]</span>
+
+<span class="nf">ggplot</span><span class="p">(</span><span class="n">plot_distance_from_city</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="nf">reorder</span><span class="p">(</span><span class="n">km_bin</span><span class="p">,</span> <span class="o">-</span><span class="n">N</span><span class="p">)</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="nf">reorder</span><span class="p">(</span><span class="n">km_bin</span><span class="p">,</span> <span class="o">-</span><span class="n">N</span><span class="p">)</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_col</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_y_sqrt</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Distance from city (km) 2 km bins&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Number of pickups&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Number of pickups by distance from city&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">none&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-30-1.png" width="100%" /></p>
+<p>The above chart shows top ten locations (in terms of radial distance
+from NYC center). The top 5 busiest locations are within 10km radius of
+the New York city center.</p>
+<a class="post-dummy-target" id="trip-with-highest-standard-deviation"></a><h2>Trip with highest Standard Deviation</h2>
+<p>The 100% of the trip duration ranges from min to max (1, 10800) secs.
+The 99.7% of the trip duration range as per 3 standard deviation are
+(-895.3775, 2397.632). The sample dataset does not have any negative
+values and is positively right skewed. Hence, the trip with max trip
+duration of 10800 secs is the trip with the highest standard
+deviation</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">trip_combined_sample</span><span class="n">[</span> <span class="p">,</span> <span class="n">.(min</span> <span class="o">=</span> <span class="nf">min</span><span class="p">(</span><span class="n">trip_time_in_secs</span><span class="p">)</span><span class="p">,</span> <span class="n">max</span> <span class="o">=</span> <span class="nf">max</span><span class="p">(</span><span class="n">trip_time_in_secs</span><span class="p">)</span><span class="p">)</span><span class="n">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##    min   max
+## 1:   1 10800
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">trip_combined_sample</span><span class="n">[</span> <span class="p">,</span> <span class="n">.(lower_bound</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">trip_time_in_secs</span><span class="p">)</span> <span class="o">-</span> <span class="m">3</span><span class="o">*</span><span class="nf">sd</span><span class="p">(</span><span class="n">trip_time_in_secs</span><span class="p">)</span><span class="p">,</span> <span class="n">upper_bound</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">trip_time_in_secs</span><span class="p">)</span> <span class="o">+</span> <span class="m">3</span><span class="o">*</span><span class="nf">sd</span><span class="p">(</span><span class="n">trip_time_in_secs</span><span class="p">)</span><span class="p">)</span><span class="n">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##    lower_bound upper_bound
+## 1:   -895.3775    2397.632
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">ggplot</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">trip_time_in_secs</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">red&#34;</span><span class="p">,</span> <span class="n">colour</span> <span class="o">=</span> <span class="s">&#39;</span><span class="s">red&#39;</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_density</span><span class="p">(</span><span class="n">adjust</span> <span class="o">=</span> <span class="m">5</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="m">0.2</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Trip Duration (in secs)&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Density&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Density plot of Trip Duration&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">none&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-31-1.png" width="100%" /></p>
+<a class="post-dummy-target" id="standard-deviation-of-fare-amount"></a><h2>Standard Deviation of Fare Amount</h2>
+<p>Trip with the most consistent fare amount is the one with the least
+standard deviation which implies the trip with the fare amount closest
+to the mean fare
+amount.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">trip_combined_sample</span><span class="n">[trip_combined_sample</span><span class="n">[</span><span class="p">,</span> <span class="nf">which.min</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">fare_amount</span> <span class="o">-</span> <span class="nf">mean</span><span class="p">(</span><span class="n">fare_amount</span><span class="p">)</span><span class="p">)</span><span class="p">)</span><span class="n">]</span><span class="n">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##                           medallion                     hack_license vendor_id
+## 1: 4233044C535D5D34B8E53D7C9AAB777F 41822E650532969D6DB37B46BEE5159E       CMT
+##        pickup_datetime payment_type fare_amount surcharge mta_tax tip_amount
+## 1: 2013-04-04 08:34:00          CSH        12.1         0     0.5          0
+##    tolls_amount total_amount rate_code store_and_fwd_flag    dropoff_datetime
+## 1:            0         12.6         1                  N 2013-04-04 08:53:00
+##    passenger_count trip_time_in_secs trip_distance pickup_longitude
+## 1:               1              1156           3.1        -73.96526
+##    pickup_latitude dropoff_longitude dropoff_latitude sample_flg fare_per_dist
+## 1:        40.79104         -73.97497         40.75634       TRUE      3.903226
+##    pickup_wday pickup_hour pickup_dist_from_city km_bin
+## 1:         Thu           8                  9.23 [8,10)
+</code></pre>
+<h1 id="multi-collinearity-analysis">Multi-collinearity Analysis</h1>
+<p>Looking at the chart below, the fare amount has a fairly high linear
+relationship with trip distance and trip duration which is actually true
+as fare amount is directly proportional to the distance travelled and
+time taken by the trip.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">trip_combined_sample_cormat</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span> 
+                                                  <span class="nf">list</span><span class="p">(</span><span class="n">rate_code</span><span class="p">,</span>
+                                                   <span class="n">pickup_datetime</span> <span class="o">=</span> <span class="nf">as.numeric</span><span class="p">(</span><span class="n">pickup_datetime</span><span class="p">)</span><span class="p">,</span> 
+                                                   <span class="n">dropoff_datetime</span> <span class="o">=</span> <span class="nf">as.numeric</span><span class="p">(</span><span class="n">dropoff_datetime</span><span class="p">)</span><span class="p">,</span>
+                                                   <span class="n">passenger_count</span><span class="p">,</span> <span class="n">trip_time_in_secs</span><span class="p">,</span> <span class="n">trip_distance</span><span class="p">,</span> 
+                                                   <span class="n">pickup_longitude</span><span class="p">,</span> <span class="n">pickup_latitude</span><span class="p">,</span> 
+                                                   <span class="n">dropoff_longitude</span><span class="p">,</span> <span class="n">dropoff_latitude</span><span class="p">,</span> 
+                                                   <span class="n">pickup_wday</span> <span class="o">=</span> <span class="nf">as.numeric</span><span class="p">(</span><span class="n">trip_combined_sample</span><span class="o">$</span><span class="n">pickup_wday</span><span class="p">)</span><span class="p">,</span>
+                                                   <span class="n">pickup_hour</span><span class="p">,</span> <span class="n">pickup_dist_from_city</span><span class="p">,</span> <span class="n">fare_amount</span><span class="p">)</span><span class="n">]</span>
+
+
+<span class="n">corr</span> <span class="o">&lt;-</span> <span class="nf">cor</span><span class="p">(</span><span class="n">trip_combined_sample_cormat</span><span class="p">,</span> <span class="n">use</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">pairwise.complete.obs&#34;</span><span class="p">)</span>
+
+
+<span class="nf">ggcorrplot</span><span class="p">(</span><span class="n">corr</span><span class="p">,</span> <span class="n">hc.order</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">lower&#34;</span><span class="p">,</span>
+           <span class="n">ggtheme</span> <span class="o">=</span> <span class="n">ggthemes</span><span class="o">::</span><span class="n">theme_gdocs</span><span class="p">,</span>
+           <span class="n">colors</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;</span><span class="s">#ff7f0e&#34;</span><span class="p">,</span> <span class="s">&#34;</span><span class="s">white&#34;</span><span class="p">,</span> <span class="s">&#34;</span><span class="s">#1f83b4&#34;</span><span class="p">)</span><span class="p">,</span>
+           <span class="n">lab</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span> <span class="o">+</span>
+            <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Correlation Matrix&#34;</span><span class="p">)</span> <span class="o">+</span>
+            <span class="nf">theme</span><span class="p">(</span><span class="n">panel.grid.major</span><span class="o">=</span><span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span>
+                  <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span> 
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-33-1.png" width="100%" /></p>
+<h1 id="linear-regression">Linear Regression</h1>
+<p>Let’s try to build a model for predicting the fare amount based on all
+the continous variables as shown in the above chart and also try to
+build a model using just the highly correlated independent variables
+<em>trip_distance</em> and <em>trip_time_in_secs</em></p>
+<a class="post-dummy-target" id="split-data-into-train-and-test-datasets"></a><h2>Split data into train and test datasets</h2>
+<p>We will use 80% of the sample data to train the model and 20% of the
+data to test the model performance.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Setting seed for reproducible results</span>
+<span class="nf">set.seed</span><span class="p">(</span><span class="m">131</span><span class="p">)</span>
+<span class="n">training_samples</span> <span class="o">&lt;-</span> <span class="nf">createDataPartition</span><span class="p">(</span><span class="n">trip_combined_sample_cormat</span><span class="o">$</span><span class="n">fare_amount</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="m">0.8</span><span class="p">,</span> <span class="n">list</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+<span class="n">train_data</span>  <span class="o">&lt;-</span> <span class="n">trip_combined_sample_cormat</span><span class="n">[training_samples</span><span class="p">,</span> <span class="n">]</span>
+<span class="n">test_data</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample_cormat</span><span class="n">[</span><span class="o">-</span><span class="n">training_samples</span><span class="p">,</span> <span class="n">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><a class="post-dummy-target" id="train-a-multiple-linear-regression-model"></a><h2>Train a multiple linear regression model</h2>
+<p>For the first model, we will use all the continous variables</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Train the model</span>
+<span class="n">model_1</span><span class="o">&lt;-</span><span class="nf">lm</span><span class="p">(</span><span class="n">fare_amount</span><span class="o">~</span><span class="n">.,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">train_data</span><span class="p">)</span>
+<span class="n">model_summary</span> <span class="o">&lt;-</span> <span class="nf">summary</span><span class="p">(</span><span class="n">model_1</span><span class="p">)</span>
+<span class="n">model_summary</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>## 
+## Call:
+## lm(formula = fare_amount ~ ., data = train_data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -157.920   -0.342   -0.101    0.181  176.742 
+## 
+## Coefficients:
+##                         Estimate Std. Error  t value Pr(&gt;|t|)    
+## (Intercept)            1.591e+02  8.394e+00   18.950  &lt; 2e-16 ***
+## rate_code              6.652e+00  1.082e-02  614.827  &lt; 2e-16 ***
+## pickup_datetime        1.081e-04  2.803e-05    3.857 0.000115 ***
+## dropoff_datetime      -1.081e-04  2.803e-05   -3.858 0.000114 ***
+## passenger_count       -1.040e-02  1.506e-03   -6.909 4.87e-12 ***
+## trip_time_in_secs      6.700e-03  2.862e-05  234.101  &lt; 2e-16 ***
+## trip_distance          1.642e+00  1.137e-03 1443.944  &lt; 2e-16 ***
+## pickup_longitude       4.013e-01  7.057e-02    5.686 1.30e-08 ***
+## pickup_latitude        2.016e+00  6.646e-02   30.325  &lt; 2e-16 ***
+## dropoff_longitude      2.317e+00  5.703e-02   40.620  &lt; 2e-16 ***
+## dropoff_latitude      -7.273e-01  6.224e-02  -11.686  &lt; 2e-16 ***
+## pickup_wday           -1.102e-02  1.063e-03  -10.370  &lt; 2e-16 ***
+## pickup_hour           -1.208e-02  3.254e-04  -37.113  &lt; 2e-16 ***
+## pickup_dist_from_city -3.502e-03  6.034e-04   -5.804 6.50e-09 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.27 on 1171794 degrees of freedom
+## Multiple R-squared:  0.9437, Adjusted R-squared:  0.9437 
+## F-statistic: 1.512e+06 on 13 and 1171794 DF,  p-value: &lt; 2.2e-16
+</code></pre>
+<p>The model summary tells us that all the independent variables are
+significant in predicting the final value of the dependent variable
+(fare amount). An R-squared of 94.37% is a pretty good measure of the
+model performance. We need to ensure we are not overfitting the model
+and there are no effects of multi-collinearity among the independent
+variables that can impact the model performance.</p>
+<a class="post-dummy-target" id="testing-the-model-performance"></a><h2>Testing the model performance</h2>
+<p>We will use root mean square error (RMSE) and R-squared (R2) to measure
+and test the model performance.</p>
+<p>RMSE is the mean error on the predictions and tell us how far the
+predicted value is from actual. For this metric, the lower the error,
+the better is the model perfomance.</p>
+<p>R2 is the measure of proportion of the variability in the data that can
+be explained by the variations in the independent variables. Ideally,
+100% of the variation in the dependent variable must be explained by the
+variations in the independent variables. So, for this metric, the higher
+values suggests a better performing model.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Make predictions</span>
+<span class="n">predictions</span> <span class="o">&lt;-</span>  <span class="nf">predict</span><span class="p">(</span><span class="n">model_1</span><span class="p">,</span> <span class="n">test_data</span><span class="p">)</span>
+<span class="c1"># Model performance</span>
+<span class="nf">data.table</span><span class="p">(</span>
+  <span class="n">RMSE</span> <span class="o">=</span> <span class="nf">RMSE</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">test_data</span><span class="o">$</span><span class="n">fare_amount</span><span class="p">)</span><span class="p">,</span>
+  <span class="n">R2</span> <span class="o">=</span> <span class="nf">R2</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">test_data</span><span class="o">$</span><span class="n">fare_amount</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##        RMSE        R2
+## 1: 2.210935 0.9464949
+</code></pre>
+<p>To detect multicollinearity in a regression model, will test the
+Variance Inflation Factor (VIF) of each of the independent variables.
+The cut-off of VIF = 5 is used to determine the magnitude of
+multicollinearity and the variables that have VIF&gt;5 are generally
+removed from the regression
+model.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">vif</span><span class="p">(</span><span class="n">model_1</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##             rate_code       pickup_datetime      dropoff_datetime 
+##          1.260701e+00          9.847355e+07          9.847408e+07 
+##       passenger_count     trip_time_in_secs         trip_distance 
+##          1.000551e+00          5.606676e+01          3.310206e+00 
+##      pickup_longitude       pickup_latitude     dropoff_longitude 
+##          1.844589e+00          1.267236e+00          1.197876e+00 
+##      dropoff_latitude           pickup_wday           pickup_hour 
+##          1.160223e+00          1.007685e+00          1.008004e+00 
+## pickup_dist_from_city 
+##          1.746623e+00
+</code></pre>
+<p>The VIF for two of the independent variables is quite high.
+<em>pickup_datetime</em> and <em>dropoff_datetime</em><br>
+Let’s remove these variable and try the regression model.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Train the model</span>
+<span class="n">model_2</span><span class="o">&lt;-</span><span class="nf">lm</span><span class="p">(</span><span class="n">fare_amount</span><span class="o">~</span><span class="n">. </span><span class="o">-</span><span class="n">pickup_datetime</span><span class="o">-</span><span class="n">dropoff_datetime</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">train_data</span><span class="p">)</span>
+<span class="n">model_summary</span> <span class="o">&lt;-</span> <span class="nf">summary</span><span class="p">(</span><span class="n">model_2</span><span class="p">)</span>
+<span class="n">model_summary</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>## 
+## Call:
+## lm(formula = fare_amount ~ . - pickup_datetime - dropoff_datetime, 
+##     data = train_data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -157.911   -0.342   -0.101    0.181  176.747 
+## 
+## Coefficients:
+##                         Estimate Std. Error  t value Pr(&gt;|t|)    
+## (Intercept)            1.446e+02  7.467e+00   19.366  &lt; 2e-16 ***
+## rate_code              6.652e+00  1.082e-02  614.845  &lt; 2e-16 ***
+## passenger_count       -1.041e-02  1.506e-03   -6.915 4.70e-12 ***
+## trip_time_in_secs      6.592e-03  5.999e-06 1098.724  &lt; 2e-16 ***
+## trip_distance          1.642e+00  1.137e-03 1444.053  &lt; 2e-16 ***
+## pickup_longitude       4.028e-01  7.057e-02    5.707 1.15e-08 ***
+## pickup_latitude        2.016e+00  6.647e-02   30.327  &lt; 2e-16 ***
+## dropoff_longitude      2.317e+00  5.703e-02   40.635  &lt; 2e-16 ***
+## dropoff_latitude      -7.270e-01  6.224e-02  -11.681  &lt; 2e-16 ***
+## pickup_wday           -1.083e-02  1.062e-03  -10.196  &lt; 2e-16 ***
+## pickup_hour           -1.207e-02  3.253e-04  -37.109  &lt; 2e-16 ***
+## pickup_dist_from_city -3.488e-03  6.034e-04   -5.780 7.48e-09 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.27 on 1171796 degrees of freedom
+## Multiple R-squared:  0.9437, Adjusted R-squared:  0.9437 
+## F-statistic: 1.787e+06 on 11 and 1171796 DF,  p-value: &lt; 2.2e-16
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Make predictions</span>
+<span class="n">predictions</span> <span class="o">&lt;-</span>  <span class="nf">predict</span><span class="p">(</span><span class="n">model_2</span><span class="p">,</span> <span class="n">test_data</span><span class="p">)</span>
+<span class="c1"># Model performance</span>
+<span class="nf">data.table</span><span class="p">(</span>
+  <span class="n">RMSE</span> <span class="o">=</span> <span class="nf">RMSE</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">test_data</span><span class="o">$</span><span class="n">fare_amount</span><span class="p">)</span><span class="p">,</span>
+  <span class="n">R2</span> <span class="o">=</span> <span class="nf">R2</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">test_data</span><span class="o">$</span><span class="n">fare_amount</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##        RMSE        R2
+## 1: 2.210928 0.9464953
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">vif</span><span class="p">(</span><span class="n">model_2</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##             rate_code       passenger_count     trip_time_in_secs 
+##              1.260680              1.000541              2.463868 
+##         trip_distance      pickup_longitude       pickup_latitude 
+##              3.309251              1.844557              1.267235 
+##     dropoff_longitude      dropoff_latitude           pickup_wday 
+##              1.197864              1.160221              1.006523 
+##           pickup_hour pickup_dist_from_city 
+##              1.007176              1.746588
+</code></pre>
+<p>Both the RMSE and R2 gets better by removing the two high VIF variables,
+but the change in model performance is not that significant. The VIF of
+<em>model_2</em> improves. Hence, the <em>model_2</em> is better than <em>model_1</em></p>
+<p>Let’s also look at predicting the fare amount solely based on trip
+distance and trip duration and see if the model performance improves or
+declines.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Train the model</span>
+<span class="n">model_3</span><span class="o">&lt;-</span><span class="nf">lm</span><span class="p">(</span><span class="n">fare_amount</span><span class="o">~</span><span class="n">trip_distance</span><span class="o">+</span><span class="n">trip_time_in_secs</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">train_data</span><span class="p">)</span>
+<span class="n">model_summary</span> <span class="o">&lt;-</span> <span class="nf">summary</span><span class="p">(</span><span class="n">model_3</span><span class="p">)</span>
+<span class="n">model_summary</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>## 
+## Call:
+## lm(formula = fare_amount ~ trip_distance + trip_time_in_secs, 
+##     data = train_data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -157.321   -0.356   -0.065    0.204  193.900 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       2.019e+00  4.147e-03   486.8   &lt;2e-16 ***
+## trip_distance     1.873e+00  1.114e-03  1680.8   &lt;2e-16 ***
+## trip_time_in_secs 6.319e-03  6.814e-06   927.4   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.613 on 1171805 degrees of freedom
+## Multiple R-squared:  0.9254, Adjusted R-squared:  0.9254 
+## F-statistic: 7.273e+06 on 2 and 1171805 DF,  p-value: &lt; 2.2e-16
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Make predictions</span>
+<span class="n">predictions</span> <span class="o">&lt;-</span>  <span class="nf">predict</span><span class="p">(</span><span class="n">model_3</span><span class="p">,</span> <span class="n">test_data</span><span class="p">)</span>
+
+<span class="c1"># Model performance</span>
+<span class="nf">data.table</span><span class="p">(</span>
+  <span class="n">RMSE</span> <span class="o">=</span> <span class="nf">RMSE</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">test_data</span><span class="o">$</span><span class="n">fare_amount</span><span class="p">)</span><span class="p">,</span>
+  <span class="n">R2</span> <span class="o">=</span> <span class="nf">R2</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">test_data</span><span class="o">$</span><span class="n">fare_amount</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##        RMSE        R2
+## 1: 2.543644 0.9291734
+</code></pre>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">vif</span><span class="p">(</span><span class="n">model_3</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##     trip_distance trip_time_in_secs 
+##          2.398172          2.398172
+</code></pre>
+<p>The RMSE increases and R-squared decreases for the third model with just
+two independent variables, which makes the <em>model_2</em> as the best model
+so far.</p>
+<h1 id="machine-learning">Machine Learning</h1>
+<a class="post-dummy-target" id="xgboost-model"></a><h2>xgboost model</h2>
+<p>Next we try to fit a machine learning model to our data and see if we
+can get a better performing model. We are going to try Extreme gradient
+boosting (xgboot) model for our regression problem. Here we are fitting
+a xgboost model with randomly chosen hyperparameters using the same
+training dataset that we used earlier in the linear model and test the
+model performance using the same metrics and same test dataset that we
+have used
+earlier.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">xg_train</span> <span class="o">&lt;-</span> <span class="nf">xgb.DMatrix</span><span class="p">(</span><span class="nf">data.matrix</span><span class="p">(</span><span class="n">train_data</span><span class="n">[</span><span class="p">,</span> <span class="nf">names</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span><span class="n">[1</span><span class="o">:</span><span class="m">12</span><span class="n">]</span><span class="p">,</span><span class="n">with</span><span class="o">=</span><span class="kc">FALSE</span><span class="n">]</span><span class="p">)</span>
+                        <span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">train_data</span><span class="o">$</span><span class="n">fare_amount</span>
+                        <span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="kc">NaN</span>
+                        <span class="p">)</span>
+
+<span class="n">xg_test</span> <span class="o">&lt;-</span> <span class="nf">xgb.DMatrix</span><span class="p">(</span><span class="nf">data.matrix</span><span class="p">(</span><span class="n">test_data</span><span class="n">[</span><span class="p">,</span> <span class="nf">names</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span><span class="n">[1</span><span class="o">:</span><span class="m">12</span><span class="n">]</span><span class="p">,</span><span class="n">with</span><span class="o">=</span><span class="kc">FALSE</span><span class="n">]</span><span class="p">)</span>
+                       <span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">$</span><span class="n">fare_amount</span>
+                       <span class="p">,</span> <span class="n">missing</span> <span class="o">=</span> <span class="kc">NaN</span>
+                      <span class="p">)</span>
+
+
+<span class="c1"># Hyperparameter has been randomly chosen but can be tuned using a gridsearch method</span>
+<span class="n">model_4</span> <span class="o">&lt;-</span> <span class="nf">xgboost</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">xg_train</span><span class="p">,</span> <span class="c1"># training data as matrix</span>
+                          <span class="n">label</span> <span class="o">=</span> <span class="n">train_data</span><span class="o">$</span><span class="n">fare_amount</span><span class="p">,</span>  <span class="c1"># column of outcomes</span>
+                          <span class="n">nrounds</span> <span class="o">=</span> <span class="m">100</span><span class="p">,</span>       <span class="c1"># number of trees to build</span>
+                          <span class="n">objective</span> <span class="o">=</span> <span class="s">&#39;</span><span class="s">reg:squarederror&#39;</span><span class="p">,</span> <span class="c1"># objective</span>
+                          <span class="n">eta</span> <span class="o">=</span> <span class="m">0.3</span><span class="p">,</span>
+                          <span class="n">depth</span> <span class="o">=</span> <span class="m">6</span><span class="p">,</span>
+                          <span class="n">verbose</span> <span class="o">=</span> <span class="m">0</span>  <span class="c1"># silent</span>
+<span class="p">)</span>
+
+<span class="c1"># Make predictions</span>
+<span class="n">pred</span> <span class="o">&lt;-</span> <span class="nf">predict</span><span class="p">(</span><span class="n">model_4</span><span class="p">,</span> <span class="n">xg_test</span><span class="p">)</span>
+
+<span class="nf">data.table</span><span class="p">(</span>
+  <span class="n">RMSE</span> <span class="o">=</span> <span class="nf">RMSE</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">test_data</span><span class="o">$</span><span class="n">fare_amount</span><span class="p">)</span><span class="p">,</span>
+  <span class="n">R2</span> <span class="o">=</span> <span class="nf">R2</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">test_data</span><span class="o">$</span><span class="n">fare_amount</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##        RMSE        R2
+## 1: 1.038733 0.9881935
+</code></pre>
+<p>We can see that the machine learning model performs much better than
+linear regression with a lower RMSE and better R-squared</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">xgb.importance</span><span class="p">(</span><span class="nf">names</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span><span class="n">[1</span><span class="o">:</span><span class="m">12</span><span class="n">]</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">model_4</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><pre><code>##               Feature         Gain       Cover  Frequency
+##  1:     trip_distance 7.607002e-01 0.275534885 0.19776407
+##  2: trip_time_in_secs 1.921994e-01 0.199702106 0.19969160
+##  3:         rate_code 3.789770e-02 0.084670402 0.12837317
+##  4: dropoff_longitude 4.076790e-03 0.131179263 0.11661527
+##  5:  pickup_longitude 1.759692e-03 0.064025081 0.07710100
+##  6:  dropoff_latitude 1.620849e-03 0.113969676 0.08847340
+##  7:   pickup_latitude 8.579963e-04 0.051549190 0.05705474
+##  8:   pickup_datetime 4.253560e-04 0.008110852 0.06784888
+##  9:       pickup_hour 2.868172e-04 0.041595773 0.03585197
+## 10:       pickup_wday 7.111016e-05 0.013494399 0.01021588
+## 11:   passenger_count 5.845308e-05 0.004684354 0.01021588
+## 12:  dropoff_datetime 4.566125e-05 0.011484020 0.01079414
+</code></pre>
+<p>The feature importance shows the top two features are <em>trip_distance</em>
+and <em>trip_time_in_secs</em></p>
+<h1 id="mean-values-as-central-tendency">Mean values as central tendency</h1>
+<p>We have already established that our data has outliers and the
+distribution of fare amount and trip duration is positively right
+skewed. Since the distribution is not normal, the respective means for
+fare amount and trip duration cannot be treated as a measure of central
+tendency unless we try to make the distribution normal by removing the
+outliers or by transforming the variables (fare and distance).</p>
+<h1 id="maximize-earnings-in-a-day">Maximize earnings in a day</h1>
+<p>Assuming an 8-hour shift, let’s see which starting hour of the shift in
+a day gives maximun
+earnings</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">sum_earnings_hr</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span> <span class="n">.(fare_amount_sum</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">fare_amount</span><span class="p">)</span><span class="p">)</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">pickup_hour</span><span class="p">)</span><span class="n">]</span><span class="nf">[order</span><span class="p">(</span><span class="n">pickup_hour</span><span class="p">)</span><span class="n">]</span>
+
+<span class="c1"># Append first 7 hours earnings at the end to handle the corner cases of rolling sum</span>
+<span class="n">sum_earnings_hr</span> <span class="o">&lt;-</span> <span class="nf">rbind</span><span class="p">(</span><span class="n">sum_earnings_hr</span><span class="p">,</span> <span class="nf">head</span><span class="p">(</span><span class="n">sum_earnings_hr</span><span class="p">,</span> <span class="m">7</span><span class="p">)</span><span class="p">)</span>
+
+<span class="n">sum_earnings_hr</span><span class="n">[</span><span class="p">,</span> <span class="n">shift_earnings</span> <span class="o">:</span><span class="o">=</span> <span class="nf">frollsum</span><span class="p">(</span><span class="n">fare_amount_sum</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="m">8</span><span class="p">,</span> <span class="n">align</span> <span class="o">=</span> <span class="s">&#39;</span><span class="s">left&#39;</span><span class="p">)</span><span class="n">]</span>
+
+<span class="c1"># Drop the records that were appended for handling corner cases</span>
+<span class="n">sum_earnings_hr</span> <span class="o">&lt;-</span> <span class="n">sum_earnings_hr</span><span class="n">[</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">shift_earnings</span><span class="p">)</span><span class="n">]</span>
+
+<span class="nf">ggplot</span><span class="p">(</span><span class="n">sum_earnings_hr</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="nf">reorder</span><span class="p">(</span><span class="n">pickup_hour</span><span class="p">,</span> <span class="o">-</span><span class="n">shift_earnings</span><span class="p">)</span><span class="p">,</span> <span class="n">shift_earnings</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="nf">reorder</span><span class="p">(</span><span class="n">pickup_hour</span><span class="p">,</span> <span class="o">-</span><span class="n">shift_earnings</span><span class="p">)</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_col</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_y_sqrt</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Hour of the day&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Total earnings&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Total earnings for 8 hour shift by starting hour &#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">none&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-42-1.png" width="100%" /></p>
+<p>From the chart, it is clear that to maximise the earnings, it is better
+to start the 8-hour shift from 4pm (evenings)</p>
+<h1 id="minimize-work-time-in-a-day">Minimize work time in a day</h1>
+<p>Here the assumption is that work time is calculated by the time spent
+working on trips (trip durations).<br>
+Again assuming an 8-hour shift, let’s see which starting hour of the
+shift in a day gives more than average earnings by spending least amount
+of trip
+hours</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-r" data-lang="r"><span class="n">sum_earnings_trips_hr</span> <span class="o">&lt;-</span> <span class="n">trip_combined_sample</span><span class="n">[</span><span class="p">,</span> <span class="n">.(fare_amount_sum</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">fare_amount</span><span class="p">)</span><span class="p">,</span> <span class="n">trip_time_sum</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">trip_time_in_secs</span><span class="p">)</span><span class="p">)</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">pickup_hour</span><span class="p">)</span><span class="n">]</span><span class="nf">[order</span><span class="p">(</span><span class="n">pickup_hour</span><span class="p">)</span><span class="n">]</span>
+
+<span class="c1"># Append first 7 hours earnings at the end to handle the corner cases of rolling sum</span>
+<span class="n">sum_earnings_trips_hr</span> <span class="o">&lt;-</span> <span class="nf">rbind</span><span class="p">(</span><span class="n">sum_earnings_trips_hr</span><span class="p">,</span> <span class="nf">head</span><span class="p">(</span><span class="n">sum_earnings_trips_hr</span><span class="p">,</span> <span class="m">7</span><span class="p">)</span><span class="p">)</span>
+
+<span class="n">sum_earnings_trips_hr</span><span class="n">[</span><span class="p">,</span> <span class="n">fare_amount_sum_shift</span> <span class="o">:</span><span class="o">=</span> <span class="nf">frollmean</span><span class="p">(</span><span class="n">fare_amount_sum</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="m">8</span><span class="p">,</span> <span class="n">align</span> <span class="o">=</span> <span class="s">&#39;</span><span class="s">left&#39;</span><span class="p">)</span><span class="n">]</span>
+<span class="n">sum_earnings_trips_hr</span><span class="n">[</span><span class="p">,</span> <span class="n">trip_time_sum_shift</span> <span class="o">:</span><span class="o">=</span> <span class="nf">frollmean</span><span class="p">(</span><span class="n">trip_time_sum</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="m">8</span><span class="p">,</span> <span class="n">align</span> <span class="o">=</span> <span class="s">&#39;</span><span class="s">left&#39;</span><span class="p">)</span><span class="n">]</span>
+
+<span class="c1"># Drop the records that were appended for handling corner cases</span>
+<span class="n">sum_earnings_trips_hr</span> <span class="o">&lt;-</span> <span class="n">sum_earnings_trips_hr</span><span class="n">[</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">fare_amount_sum_shift</span><span class="p">)</span><span class="n">]</span>
+
+<span class="nf">ggplot</span><span class="p">(</span><span class="n">sum_earnings_trips_hr</span><span class="n">[fare_amount_sum_shift</span><span class="o">&gt;=</span><span class="nf">mean</span><span class="p">(</span><span class="n">fare_amount_sum_shift</span><span class="p">)</span><span class="n">]</span><span class="p">,</span> 
+       <span class="nf">aes</span><span class="p">(</span><span class="nf">reorder</span><span class="p">(</span><span class="n">pickup_hour</span><span class="p">,</span> <span class="n">trip_time_sum_shift</span><span class="p">)</span><span class="p">,</span> <span class="n">trip_time_sum_shift</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="nf">reorder</span><span class="p">(</span><span class="n">pickup_hour</span><span class="p">,</span> <span class="n">trip_time_sum_shift</span><span class="p">)</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_col</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_y_sqrt</span><span class="p">(</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Hour of the day&#34;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">Total trip durations&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;</span><span class="s">Total trip durations for 8 hour shift by starting hour&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">panel.background</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">black&#34;</span><span class="p">)</span><span class="p">,</span> 
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;</span><span class="s">none&#34;</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="index_files/figure-gfm/unnamed-chunk-43-1.png" width="100%" /></p>
+<p>The chart shows if we start the 8-hour shift from 7pm (evenings), we
+will be spent the least time on taxi trips while still maintaining
+average earnings.</p>
+<h1 id="maximising-10-taxis-fleet">Maximising 10 taxis fleet</h1>
+<p>Based on the given data:</p>
+<ul>
+<li>Assuming a percentage share in the fare, target the pickups in the
+evenings after 4pm</li>
+<li>Considering the expenses on repair/replace of taxis, target shorter
+trips (time/distance) while still maintaing average fare income</li>
+<li>Not considering the competiton, the target location would be within
+10kms radius from NYC center</li>
+<li>Newer taxis could be targetted for longer trip hotspots while older
+ones can be targetted for shorter trips</li>
+<li>More complex analysis can be done the taxi ideal time/location
+compared to the demand time/location and redirecting taxis based on
+an optimisation algorithm</li>
+</ul></div>
+    </div></div>
+            </main><footer class="footer">
+    <div class="copyright"><div class="copyright-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreffer">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="external nofollow noopener noreffer">LoveIt<i class="far fa-heart fa-fw"></i></a>
+        </div>
+
+        <div class="copyright-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">xxxx</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+    </div>
+</footer></div><a href="#" class="dynamic-to-top" id="dynamic-to-top" data-scroll>
+            <span>&nbsp;</span>
+        </a><script src="/js/lib/jquery/jquery.slim.min.js"></script><script src="/js/lib/lazysizes/lazysizes.min.js"></script><script src="/js/lib/smooth-scroll/smooth-scroll.polyfills.min.js"></script><script>window.scroll = new SmoothScroll('[data-scroll]', {speed: 300, speedAsDuration: true});</script><script src="/js/blog.min.js"></script></body>
+</html>
